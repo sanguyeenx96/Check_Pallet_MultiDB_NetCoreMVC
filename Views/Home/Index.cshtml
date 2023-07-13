@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@section Scripts{
+    <script>
+        $("#thitruong").keydown(function (e) {
+            if (e.keyCode === 13) {
+                // enter event
+                document.getElementById("sopallet").focus();
+            }
+        });
+        $("#sopallet").keydown(function (e) {
+            if (e.keyCode === 13) {
+                // enter event
+                const myForm = document.getElementById('batdau');
+                event.preventDefault(); // Đừng thực hiện hành động mặc định khi nhấn Enter
+                myForm.submit(); // Gửi form
+                //document.getElementById("sobody").focus();
+            }
+        });
+    </script>
+}
+
+    <div class="content-header">
+        <div class="container">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0"> Check Pallet Software <small>Version 1.0</small></h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item active">Trang chủ</li>
+                        <li class="breadcrumb-item active">Step 1</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-8">
+                    <form id="batdau" class="form-horizontal">
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">   <small>Step</small>  <i class="fa-solid fa-1"></i></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label" style="text-align: center;">Merchandide</label>
+                                    <div class="col-sm-9">
+                                        <input id="thitruong" name="thitruong" type="text" class="form-control" autofocus required>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label" style="text-align: center;">Number pallet</label>
+                                    <div class="col-sm-9">
+                                        <input id="sopallet" name="sopallet" type="text" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+

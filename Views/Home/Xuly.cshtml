@@ -1,0 +1,221 @@
+﻿@model danhsachbody
+
+@section Scripts{
+    <script>
+        var rowCount = $("#tableData > tbody").children().length;
+        $("#sodong").append(rowCount);
+        var checkok = $("#checkok");
+        var slok = 0;
+        checkok.text(slok + " " + "/" + " " + rowCount);
+        $("#sobody").keydown(function (e) {
+            if (e.keyCode === 13) {
+                event.preventDefault(); // Đừng thực hiện hành động mặc định khi nhấn Enter
+                var inputValue = $(this).val().toLowerCase(); //lấy giá trị của Input
+
+                if(inputValue === "8"){
+                    var inputList = [];
+                    var listbody = [];
+               
+                    var tableRows = $('table tr');
+                    tableRows.each(function () {
+                        var bodydb = $(this).find('td:eq(0)').text().toUpperCase();
+                        var bodycheck = $(this).find('input').val().toUpperCase();
+                        inputList.push({
+                            bodydb: bodydb,
+                            bodycheck: bodycheck
+                        });
+                    });
+                    console.log(inputList);
+
+                    $.ajax({
+                        url: "/Home/luu",
+                        type: "POST",
+                        data: JSON.stringify(inputList),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (result) {
+                            console.log(result);
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(error);
+                        }
+                    });
+
+
+
+
+
+
+                }
+                if (inputValue === "9999") {
+                    if (slok == rowCount) {
+                        var modal = $('#modal-ok');
+                        modal.modal('show');
+                        var countdown = 5;
+                        $('#countdown').text(countdown);
+                        var interval = setInterval(function () {
+                            countdown--;
+                            $('#countdown').text(countdown);
+                            if (countdown == 0) {
+                                clearInterval(interval);
+                                modal.modal('hide');
+                            }
+                        }, 1000);
+                    }
+                    else {
+                        var modal = $('#modal-ng');
+                        modal.modal('show');
+                    }
+                }
+                else {
+                    var tableRows = $('table tr');
+                    var isMatch = false;
+                    tableRows.each(function () {
+                        var rowValue = $(this).find('td:eq(0)').text().toLowerCase();
+                        if (inputValue.indexOf(rowValue) > -1) {
+                            var checktrung = $(this).find('input').val().toLowerCase();
+                            if (checktrung.length > 5) {
+                            }
+                            else {
+                                $(this).css('background-color', '#28A745');
+                                isMatch = true;
+                                $(this).find('input').val(inputValue.toUpperCase());
+                                $(this).css("color", "white");
+                                slok++;
+                                checkok.text(slok + " " + "/" + " " + rowCount);
+                                if (slok == rowCount) {
+                                    $("#thongbao").removeClass(" bg-warning");
+                                    $("#thongbao").addClass(" bg-success");
+                                }
+                            }
+                        }
+                    });
+                    $(this).val("")
+                }
+            }
+        });
+    </script>
+}
+    <style>
+        .table-bordered td, .table-bordered th {
+            border: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+    </style>
+    <div class="content-header">
+        <div class="container">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0"> Check Pallet Software <small>Version 1.0</small></h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item ">Trang chủ</li>
+                        <li class="breadcrumb-item ">Step 1</li>
+                        <li class="breadcrumb-item active">Step 2</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5">
+                    <form id="check" class="form-horizontal">
+                        <div class="card card-primary ">
+                            <div class="card-header">
+                                <h3 class="card-title"> <small>Step</small>  <i class="fa-solid fa-2"></i></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group row" style="text-align: center;">
+                                    <label class="col-sm-3 col-form-label">BodyNo</label>
+                                    <div class="col-sm-9">
+                                        <input id="sobody" name="sobody" type="text" class="form-control" autofocus>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-3"></div>
+
+                <div class="col-3" style="margin-top:15px">
+                    <div id="thongbao" class="small-box shadow bg-warning ">
+                        <div class="inner">
+                            <h3 id="checkok"></h3>
+                            <p>Pallet OK</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-cog fa-spin fa-3x fa-fw"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-secondary">
+                        <div class="card-header">
+                            <h3 class="card-title"> Merchandide: <b>@TempData["thitruong"]</b>  - Number pallet: <b>@TempData["sopallet"]</b>   </h3>
+                        </div>
+                        <div class="card-body">
+                            <table id="tableData" class="table table-bordered" style="text-align:center">
+                                <tbody>
+                                @foreach (var i in (List<danhsachbody>)ViewBag.ds)
+                                {
+                                    <tr>
+                                        <form id="@i.bodydb" asp-controller="Home" asp-action="Luudulieu" method="post">
+                                        <td class="col-3">@i.bodydb</td>
+                                        <td>
+                                            <input asp-for="bodycheck" class="form-control" id="@i.bodydb"/>
+                                        </td>
+                                        <td>
+                                            <button type="submit">SUBMIT</button>
+                                        </td>
+                                        </form>                                   
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modal-ng">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content  bg-danger" style="text-align:center">
+            <div class="modal-header">
+                <h4 class="modal-title"><i class="fa fa-exclamation-triangle" aria-hidden="true"> </i> Cảnh báo</h4>
+            </div>
+            <div class="modal-body">
+                <h1>THIẾU PALLET <br /> <small>  Kiểm tra và thao tác lại </small>  </h1>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"> </i> Đóng cửa sổ</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-ok">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content  bg-success" style="text-align:center">
+            <div class="modal-header">
+                <h4 class="modal-title"><i class="fa fa-exclamation-triangle" aria-hidden="true"> </i> Thông báo <small> (Đóng sau <a id="countdown"></a> giây) </small>   </h4>
+            </div>
+            <div class="modal-body">
+                <h1>THÀNH CÔNG</h1>
+                <br />
+                <i class="fa fa-refresh fa-spin fa-3x fa-fw" aria-hidden="true"></i>
+                <br />
+                <small>Đang lưu dữ liệu vào máy chủ...</small>
+                <br />
+
+            </div>
+        </div>
+    </div>
+</div>
+
