@@ -1,21 +1,28 @@
 ﻿@model danhsachbody
 
+@{
+    string ten_model = ViewBag.tenmodel;
+    string ten_thitruong = TempData["thitruong"].ToString();
+    string ten_ma_pallet = TempData["sopallet"].ToString();
+
+}
+
 @section Scripts{
     <script>
         var rowCount = $("#tableData > tbody").children().length;
         $("#sodong").append(rowCount);
         var checkok = $("#checkok");
         var slok = 0;
-        checkok.text(slok + " " + "/" + " " + rowCount);
+        checkok.text(slok + "/" + rowCount);
         $("#sobody").keydown(function (e) {
             if (e.keyCode === 13) {
                 event.preventDefault(); // Đừng thực hiện hành động mặc định khi nhấn Enter
                 var inputValue = $(this).val().toLowerCase(); //lấy giá trị của Input
 
-                if(inputValue === "8"){
+                if (inputValue === "8") {
                     var inputList = [];
                     var listbody = [];
-               
+
                     var tableRows = $('table tr');
                     tableRows.each(function () {
                         var bodydb = $(this).find('td:eq(0)').text().toUpperCase();
@@ -40,12 +47,6 @@
                             console.log(error);
                         }
                     });
-
-
-
-
-
-
                 }
                 if (inputValue === "9999") {
                     if (slok == rowCount) {
@@ -74,18 +75,20 @@
                         var rowValue = $(this).find('td:eq(0)').text().toLowerCase();
                         if (inputValue.indexOf(rowValue) > -1) {
                             var checktrung = $(this).find('input').val().toLowerCase();
-                            if (checktrung.length > 5) {
+                            if (checktrung.length > 3) {
                             }
                             else {
-                                $(this).css('background-color', '#28A745');
+                                //$(this).css('background-color', '#228B22 ');
                                 isMatch = true;
                                 $(this).find('input').val(inputValue.toUpperCase());
-                                $(this).css("color", "white");
+                                $(this).find('input').css('background-color', '#228B22 ');
+                                $(this).find('input').css("color", "white");
+
                                 slok++;
-                                checkok.text(slok + " " + "/" + " " + rowCount);
+                                checkok.text(slok + "/" + rowCount);
                                 if (slok == rowCount) {
-                                    $("#thongbao").removeClass(" bg-warning");
-                                    $("#thongbao").addClass(" bg-success");
+                                    $("#thongbao").removeClass(" bg-gradient-warning");
+                                    $("#thongbao").addClass(" bg-gradient-success");
                                 }
                             }
                         }
@@ -106,13 +109,13 @@
         <div class="container">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0"> Check Pallet Software <small>Version 1.0</small></h1>
+                    Check Pallet Software <small>Version 1.0</small>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item ">Trang chủ</li>
-                        <li class="breadcrumb-item ">Step 1</li>
-                        <li class="breadcrumb-item active">Step 2</li>
+                        <li class="breadcrumb-item ">Bắt đầu kiểm tra</li>
+                        <li class="breadcrumb-item ">Bước 1</li>
+                        <li class="breadcrumb-item active">Bước 2</li>
                     </ol>
                 </div>
             </div>
@@ -123,40 +126,55 @@
             <div class="row">
                 <div class="col-lg-5">
                     <form id="check" class="form-horizontal">
-                        <div class="card card-primary ">
+                        <div class="card bg-gradient-purple shadow">
                             <div class="card-header">
-                                <h3 class="card-title"> <small>Step</small>  <i class="fa-solid fa-2"></i></h3>
+                                <h3 class="card-title"> <small>Bước</small>  <i class="fa-solid fa-2"></i></h3>
                             </div>
                             <div class="card-body">
                                 <div class="form-group row" style="text-align: center;">
-                                    <label class="col-sm-3 col-form-label">BodyNo</label>
-                                    <div class="col-sm-9">
-                                        <input id="sobody" name="sobody" type="text" class="form-control" autofocus>
+                                    <label class="col-sm-4 col-form-label">Mã body thùng</label>
+                                    <div class="col-sm-8">
+                                        <input id="sobody" name="sobody" type="text" class="form-control" autocomplete="off" autofocus>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
-                <div class="col-3"></div>
-
-                <div class="col-3" style="margin-top:15px">
-                    <div id="thongbao" class="small-box shadow bg-warning ">
+                <div class="col-lg-4 col-sm-6" style="margin-top:15px">
+                    <div id="thongbao" class="small-box bg-gradient-warning shadow">
                         <div class="inner">
                             <h3 id="checkok"></h3>
-                            <p>Pallet OK</p>
+                            <p>Số thùng đã kiểm tra</p>
                         </div>
                         <div class="icon">
                             <i class="fa fa-cog fa-spin fa-3x fa-fw"></i>
                         </div>
                     </div>
                 </div>
+                <div class="col-lg-3 col-sm-6" style="margin-top:14px">
+                    <div class="info-box bg-gradient-secondary ">
+                        <div class="info-box-content">
+                            <span class="info-box-number text-center  mb-0">
+                                <small>Tên model:</small> <a>@ten_model</a>
+                            </span>
+                            <span class="info-box-number text-center  mb-0">
+                                <small>Thị trường:</small> @ten_thitruong
+                            </span>
+                            <span class="info-box-number text-center  mb-0">
+                                <small> Mã pallet:</small> @ten_ma_pallet
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="row">
                 <div class="col-12">
-                    <div class="card card-secondary">
+                    <div class="card card-secondary ">
                         <div class="card-header">
-                            <h3 class="card-title"> Merchandide: <b>@TempData["thitruong"]</b>  - Number pallet: <b>@TempData["sopallet"]</b>   </h3>
+                            <h3 class="card-title"> <i class="fa fa-level-down" aria-hidden="true"></i> Danh sách dữ liệu mã thùng cần kiểm tra</h3>
+                            @*                            <h3 class="card-title"> Merchandide: <b>@TempData["thitruong"]</b>  - Number pallet: <b>@TempData["sopallet"]</b>   </h3>
+                        *@
                         </div>
                         <div class="card-body">
                             <table id="tableData" class="table table-bordered" style="text-align:center">
@@ -165,14 +183,14 @@
                                 {
                                     <tr>
                                         <form id="@i.bodydb" asp-controller="Home" asp-action="Luudulieu" method="post">
-                                        <td class="col-3">@i.bodydb</td>
+                                            @* <td class="col-1">@i.model</td>
+                                        <td class="col-1">@i.merchandide</td>
+                                        <td class="col-2">@i.numberpallet</td>*@
+                                        <td class="col-2">@i.bodydb</td>
                                         <td>
-                                            <input asp-for="bodycheck" class="form-control" id="@i.bodydb"/>
+                                            <input asp-for="bodycheck" style="text-align:center" class="form-control" id="@i.bodydb" readonly="true" placeholder="chưa kiểm tra" />
                                         </td>
-                                        <td>
-                                            <button type="submit">SUBMIT</button>
-                                        </td>
-                                        </form>                                   
+                                        </form>
                                     </tr>
                                 }
                             </tbody>
@@ -183,7 +201,6 @@
         </div>
     </div>
 </div>
-
 
 <div class="modal fade" id="modal-ng">
     <div class="modal-dialog modal-lg">
