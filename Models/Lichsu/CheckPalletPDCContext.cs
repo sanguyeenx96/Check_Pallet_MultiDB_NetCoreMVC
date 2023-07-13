@@ -18,6 +18,7 @@ namespace pdc.Models.Lichsu
 
         public virtual DbSet<Dulieuthitruong> Dulieuthitruongs { get; set; } = null!;
         public virtual DbSet<Lichsu> Lichsus { get; set; } = null!;
+        public virtual DbSet<User> Users { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -64,6 +65,33 @@ namespace pdc.Models.Lichsu
                     .HasColumnName("model");
 
                 entity.Property(e => e.Numberpallet).HasColumnName("numberpallet");
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.ToTable("users");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Bophan)
+                    .HasMaxLength(50)
+                    .HasColumnName("bophan");
+
+                entity.Property(e => e.Calamviec)
+                    .HasMaxLength(50)
+                    .HasColumnName("calamviec");
+
+                entity.Property(e => e.Hoten)
+                    .HasMaxLength(100)
+                    .HasColumnName("hoten");
+
+                entity.Property(e => e.Manv)
+                    .HasMaxLength(100)
+                    .HasColumnName("manv");
+
+                entity.Property(e => e.Password)
+                    .HasMaxLength(50)
+                    .HasColumnName("password");
             });
 
             OnModelCreatingPartial(modelBuilder);

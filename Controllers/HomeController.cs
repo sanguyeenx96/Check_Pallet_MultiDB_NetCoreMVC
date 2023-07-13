@@ -19,7 +19,6 @@ namespace pdc.Controllers
         private readonly T527Context _t527Context;
         private readonly T541Context _t541Context;
         private readonly T543Context _t543Context;
-
         private readonly CheckPalletPDCContext _checkPalletPDCContext;
 
         public HomeController(ILogger<HomeController> logger, L1231Context l1231Context,
@@ -34,14 +33,50 @@ namespace pdc.Controllers
             _checkPalletPDCContext = checkPalletPDCContext;
         }
 
+        [TempData]
+        public string StatusMessage { get; set; }
+
+        public IActionResult Login(string manv, string matkhau)
+        {
+            if (!String.IsNullOrEmpty(manv) && !String.IsNullOrEmpty(matkhau))
+            {
+                User checklogin = _checkPalletPDCContext.Users.Where(x => (x.Manv == manv && x.Password == matkhau)).FirstOrDefault();
+                if (checklogin != null)
+                {
+                    ISession session = HttpContext.Session;
+
+                    session.SetString("user", checklogin.Hoten);
+                    var hoten = session.GetString("user");
+
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    StatusMessage = "Sai mã nhân viên hoặc mật khẩu!";
+                }
+            }
+            return View();
+        }
+
         public IActionResult Index(string thitruong, string sopallet)
         {
-            if (!String.IsNullOrEmpty(thitruong) && !String.IsNullOrEmpty(sopallet))
+            ISession session = HttpContext.Session;
+            var hoten = session.GetString("user");
+
+            if (hoten == null)
             {
-                TempData["thitruong"] = thitruong;
-                TempData["sopallet"] = sopallet;
-                return RedirectToAction("Xuly");
+                return RedirectToAction("Login");
             }
+            else
+            {
+                if (!String.IsNullOrEmpty(thitruong) && !String.IsNullOrEmpty(sopallet))
+                {
+                    TempData["thitruong"] = thitruong;
+                    TempData["sopallet"] = sopallet;
+                    return RedirectToAction("Xuly");
+                }
+            }
+
             return View();
         }
 
@@ -51,19 +86,39 @@ namespace pdc.Controllers
             {
                 string thitruong = TempData["thitruong"].ToString();
                 string sopallet = TempData["sopallet"].ToString();
-                var truyvan = _checkPalletPDCContext.Dulieuthitruongs.Where(x => x.Mechandide.Contains(thitruong)).FirstOrDefault();
+                var truyvan = _checkPalletPDCContext.Dulieuthitruongs.Where(x => thitruong.Contains(x.Mechandide)).FirstOrDefault();
                 string tenmodel = truyvan.Model.ToString();
+                string tenthitruong = truyvan.Mechandide.ToString();
                 List<danhsachbody> danhsach = new List<danhsachbody>();
                 if (tenmodel == "L1231")
                 {
-                    var list = _l1231Context.JisekiFs.Where(x => (x.JisSile == thitruong && x.JisPlno == sopallet)).ToList();
+                    var list = _l1231Context.JisekiFs.Where(x => (x.JisDaio == thitruong && x.JisPlno == sopallet)).ToList();
                     foreach (var i in list)
                     {
                         danhsachbody data = new danhsachbody();
+                        //data.model = tenmodel;
+                        //data.merchandide = tenthitruong;
+                        //data.numberpallet = sopallet;
                         data.bodydb = i.JisSile;
                         danhsach.Add(data);
                     }
                     ViewBag.ds = danhsach;
+                    ViewBag.tenmodel = tenmodel;
+                }
+                if (tenmodel == "T527")
+                {
+                    var list = _t527Context.JisekiFs.Where(x => (x.JisDaio == thitruong && x.JisPlno == sopallet)).ToList();
+                    foreach (var i in list)
+                    {
+                        danhsachbody data = new danhsachbody();
+                        //data.model = tenmodel;
+                        //data.merchandide = tenthitruong;
+                        //data.numberpallet = sopallet;
+                        data.bodydb = i.JisSile;
+                        danhsach.Add(data);
+                    }
+                    ViewBag.ds = danhsach;
+                    ViewBag.tenmodel = tenmodel;
                 }
             }
             else
@@ -92,17 +147,6 @@ namespace pdc.Controllers
                 _checkPalletPDCContext.SaveChanges();
             }
             return Json(new { success = true });
-        }
-
-        [HttpPost]
-        public IActionResult Luudulieu(Lichsu _lichsu, danhsachbody danhsachbody)
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
