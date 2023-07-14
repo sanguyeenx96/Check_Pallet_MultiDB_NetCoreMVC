@@ -18,6 +18,7 @@ namespace pdc.Models.Lichsu
 
         public virtual DbSet<Dulieuthitruong> Dulieuthitruongs { get; set; } = null!;
         public virtual DbSet<Lichsu> Lichsus { get; set; } = null!;
+        public virtual DbSet<LichsuNg> LichsuNgs { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -52,19 +53,48 @@ namespace pdc.Models.Lichsu
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Bodyno).HasColumnName("bodyno");
+                entity.Property(e => e.Mabodycheck).HasColumnName("mabodycheck");
 
-                entity.Property(e => e.Datecheck)
-                    .HasColumnType("datetime")
-                    .HasColumnName("datecheck");
+                entity.Property(e => e.Mabodydb).HasColumnName("mabodydb");
 
-                entity.Property(e => e.Merchandide).HasColumnName("merchandide");
+                entity.Property(e => e.Mapallet).HasColumnName("mapallet");
 
                 entity.Property(e => e.Model)
                     .HasMaxLength(50)
                     .HasColumnName("model");
 
-                entity.Property(e => e.Numberpallet).HasColumnName("numberpallet");
+                entity.Property(e => e.Ngaygio)
+                    .HasColumnType("datetime")
+                    .HasColumnName("ngaygio");
+
+                entity.Property(e => e.Nguoithaotac).HasColumnName("nguoithaotac");
+
+                entity.Property(e => e.Thitruong).HasColumnName("thitruong");
+            });
+
+            modelBuilder.Entity<LichsuNg>(entity =>
+            {
+                entity.ToTable("lichsu_NG");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Mabodycheck).HasColumnName("mabodycheck");
+
+                entity.Property(e => e.Mabodydb).HasColumnName("mabodydb");
+
+                entity.Property(e => e.Mapallet).HasColumnName("mapallet");
+
+                entity.Property(e => e.Model)
+                    .HasMaxLength(50)
+                    .HasColumnName("model");
+
+                entity.Property(e => e.Ngaygio)
+                    .HasColumnType("datetime")
+                    .HasColumnName("ngaygio");
+
+                entity.Property(e => e.Nguoithaotac).HasColumnName("nguoithaotac");
+
+                entity.Property(e => e.Thitruong).HasColumnName("thitruong");
             });
 
             modelBuilder.Entity<User>(entity =>

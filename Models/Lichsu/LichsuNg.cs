@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace pdc.Models.Lichsu
 {
-    public partial class Lichsu
+    public partial class LichsuNg
     {
         public int Id { get; set; }
         public string Model { get; set; } = null!;

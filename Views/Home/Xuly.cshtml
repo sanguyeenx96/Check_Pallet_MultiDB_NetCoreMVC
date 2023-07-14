@@ -1,10 +1,10 @@
 ﻿@model danhsachbody
-
 @{
     string ten_model = ViewBag.tenmodel;
     string ten_thitruong = TempData["thitruong"].ToString();
     string ten_ma_pallet = TempData["sopallet"].ToString();
-
+    string mapallet__hienthi = ViewBag.mapallet_hienthi;
+    string thitruong_hienthi = ViewBag.thitruong_hienthi;
 }
 
 @section Scripts{
@@ -18,38 +18,38 @@
             if (e.keyCode === 13) {
                 event.preventDefault(); // Đừng thực hiện hành động mặc định khi nhấn Enter
                 var inputValue = $(this).val().toLowerCase(); //lấy giá trị của Input
-
-                if (inputValue === "8") {
+              
+                if (inputValue === "9999") {
                     var inputList = [];
                     var listbody = [];
-
                     var tableRows = $('table tr');
                     tableRows.each(function () {
                         var bodydb = $(this).find('td:eq(0)').text().toUpperCase();
                         var bodycheck = $(this).find('input').val().toUpperCase();
                         inputList.push({
+                            model: "@ten_model",
+                            thitruong: "@ten_thitruong",
+                            mapallet: "@ten_ma_pallet",
                             bodydb: bodydb,
                             bodycheck: bodycheck
                         });
                     });
                     console.log(inputList);
 
-                    $.ajax({
-                        url: "/Home/luu",
-                        type: "POST",
-                        data: JSON.stringify(inputList),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (result) {
-                            console.log(result);
-                        },
-                        error: function (xhr, status, error) {
-                            console.log(error);
-                        }
-                    });
-                }
-                if (inputValue === "9999") {
                     if (slok == rowCount) {
+                        $.ajax({
+                            url: "/Home/luu",
+                            type: "POST",
+                            data: JSON.stringify(inputList),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (result) {
+                                console.log(result);
+                            },
+                            error: function (xhr, status, error) {
+                                console.log(error);
+                            }
+                        });
                         var modal = $('#modal-ok');
                         modal.modal('show');
                         var countdown = 5;
@@ -60,12 +60,34 @@
                             if (countdown == 0) {
                                 clearInterval(interval);
                                 modal.modal('hide');
+                                $("#sobody").remove();
+                                $("#labelmabody").remove();
+                                var labelTag = document.createElement('label');
+                                labelTag.className = " col-12 col-form-label";
+                                labelTag.innerHTML = "Kiểm tra kết thúc!";
+                                $('.hienthi').prepend(labelTag);
+                                $("#thenhapdulieu").removeClass(" bg-gradient-purple");
+                                $("#thenhapdulieu").addClass(" bg-gradient-success");
                             }
                         }, 1000);
                     }
                     else {
+                        $.ajax({
+                            url: "/Home/luuNG",
+                            type: "POST",
+                            data: JSON.stringify(inputList),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (result) {
+                                console.log(result);
+                            },
+                            error: function (xhr, status, error) {
+                                console.log(error);
+                            }
+                        });
                         var modal = $('#modal-ng');
                         modal.modal('show');
+                        $("#sobody").val("");
                     }
                 }
                 else {
@@ -126,16 +148,14 @@
             <div class="row">
                 <div class="col-lg-5">
                     <form id="check" class="form-horizontal">
-                        <div class="card bg-gradient-purple shadow">
+                        <div id="thenhapdulieu" class="card bg-gradient-purple shadow">
                             <div class="card-header">
                                 <h3 class="card-title"> <small>Bước</small>  <i class="fa-solid fa-2"></i></h3>
                             </div>
                             <div class="card-body">
-                                <div class="form-group row" style="text-align: center;">
-                                    <label class="col-sm-4 col-form-label">Mã body thùng</label>
-                                    <div class="col-sm-8">
-                                        <input id="sobody" name="sobody" type="text" class="form-control" autocomplete="off" autofocus>
-                                    </div>
+                                <div class="form-group row hienthi" style="text-align: center;">
+                                    <label id="labelmabody" class="col-sm-5 col-form-label">Mã body thùng</label>
+                                    <input id="sobody" name="sobody" type="text" class="form-control col-sm-6" autocomplete="off" autofocus>
                                 </div>
                             </div>
                         </div>
@@ -153,16 +173,16 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-sm-6" style="margin-top:14px">
-                    <div class="info-box bg-gradient-secondary ">
+                    <div class="info-box ">
                         <div class="info-box-content">
                             <span class="info-box-number text-center  mb-0">
                                 <small>Tên model:</small> <a>@ten_model</a>
                             </span>
                             <span class="info-box-number text-center  mb-0">
-                                <small>Thị trường:</small> @ten_thitruong
+                                <small>Thị trường:</small> @thitruong_hienthi
                             </span>
                             <span class="info-box-number text-center  mb-0">
-                                <small> Mã pallet:</small> @ten_ma_pallet
+                                <small> Mã pallet:</small> @mapallet__hienthi
                             </span>
                         </div>
                     </div>
@@ -170,22 +190,19 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                    <div class="card card-secondary ">
+                    <div class="card  ">
                         <div class="card-header">
-                            <h3 class="card-title"> <i class="fa fa-level-down" aria-hidden="true"></i> Danh sách dữ liệu mã thùng cần kiểm tra</h3>
+                            <h3 class="card-title"> <i class="fa fa-level-down" aria-hidden="true"></i> Danh sách mã body thùng cần kiểm tra</h3>
                             @*                            <h3 class="card-title"> Merchandide: <b>@TempData["thitruong"]</b>  - Number pallet: <b>@TempData["sopallet"]</b>   </h3>
                         *@
                         </div>
                         <div class="card-body">
-                            <table id="tableData" class="table table-bordered" style="text-align:center">
+                            <table id="tableData" class="table table-bordered bg-white" style="text-align:center">
                                 <tbody>
                                 @foreach (var i in (List<danhsachbody>)ViewBag.ds)
                                 {
                                     <tr>
                                         <form id="@i.bodydb" asp-controller="Home" asp-action="Luudulieu" method="post">
-                                            @* <td class="col-1">@i.model</td>
-                                        <td class="col-1">@i.merchandide</td>
-                                        <td class="col-2">@i.numberpallet</td>*@
                                         <td class="col-2">@i.bodydb</td>
                                         <td>
                                             <input asp-for="bodycheck" style="text-align:center" class="form-control" id="@i.bodydb" readonly="true" placeholder="chưa kiểm tra" />
@@ -202,7 +219,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="modal-ng">
+<div class="modal fade" id="modal-ng" style="margin-top:20%">
     <div class="modal-dialog modal-lg">
         <div class="modal-content  bg-danger" style="text-align:center">
             <div class="modal-header">
@@ -212,12 +229,12 @@
                 <h1>THIẾU PALLET <br /> <small>  Kiểm tra và thao tác lại </small>  </h1>
             </div>
             <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"> </i> Đóng cửa sổ</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"> </i> Đóng </button>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="modal-ok">
+<div class="modal fade" id="modal-ok" style="margin-top:20%">
     <div class="modal-dialog modal-lg">
         <div class="modal-content  bg-success" style="text-align:center">
             <div class="modal-header">
