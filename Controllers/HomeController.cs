@@ -36,11 +36,11 @@ namespace pdc.Controllers
         [TempData]
         public string StatusMessage { get; set; }
 
-        public IActionResult Login(string manv, string matkhau)
+        public async Task<IActionResult> Login(string manv, string matkhau)
         {
             if (!String.IsNullOrEmpty(manv) && !String.IsNullOrEmpty(matkhau))
             {
-                User checklogin = _checkPalletPDCContext.Users.Where(x => (x.Manv == manv && x.Password == matkhau)).FirstOrDefault();
+                User checklogin = await _checkPalletPDCContext.Users.Where(x => (x.Manv == manv && x.Password == matkhau)).FirstOrDefaultAsync();
                 if (checklogin != null)
                 {
                     ISession session = HttpContext.Session;
@@ -62,7 +62,6 @@ namespace pdc.Controllers
         {
             ISession session = HttpContext.Session;
             var hoten = session.GetString("user");
-
             if (hoten == null)
             {
                 return RedirectToAction("Login");
@@ -75,78 +74,182 @@ namespace pdc.Controllers
                     TempData["sopallet"] = sopallet;
                     return RedirectToAction("Xuly");
                 }
+                else
+                {
+                    StatusMessage = "Phải nhập đầy đủ thông tin!";
+                }
             }
-
             return View();
         }
 
-        public IActionResult Xuly()
+        public async Task<IActionResult> Xuly()
         {
             if (TempData["thitruong"] != null && TempData["sopallet"] != null)
             {
                 string thitruong = TempData["thitruong"].ToString();
                 string sopallet = TempData["sopallet"].ToString();
-                var truyvan = _checkPalletPDCContext.Dulieuthitruongs.Where(x => thitruong.Contains(x.Mechandide)).FirstOrDefault();
-                string tenmodel = truyvan.Model.ToString();
-                string tenthitruong = truyvan.Mechandide.ToString();
-                List<danhsachbody> danhsach = new List<danhsachbody>();
-                if (tenmodel == "L1231")
+                var truyvan = await _checkPalletPDCContext.Dulieuthitruongs.Where(x => thitruong.Contains(x.Mechandide)).FirstOrDefaultAsync();
+                if (truyvan != null)
                 {
-                    var list = _l1231Context.JisekiFs.Where(x => (x.JisDaio == thitruong && x.JisPlno == sopallet)).ToList();
-                    foreach (var i in list)
+                    string tenmodel = truyvan.Model.ToString();
+                    string tenthitruong = truyvan.Mechandide.ToString();
+                    List<danhsachbody> danhsach = new List<danhsachbody>();
+                    if (tenmodel == "L1231")
                     {
-                        danhsachbody data = new danhsachbody();
-                        //data.model = tenmodel;
-                        //data.merchandide = tenthitruong;
-                        //data.numberpallet = sopallet;
-                        data.bodydb = i.JisSile;
-                        danhsach.Add(data);
+                        var list = await _l1231Context.JisekiFs.Where(x => (thitruong.Contains(x.JisDaio) && sopallet.Contains(x.JisPlno))).ToListAsync();
+                        if (list.Count() > 0)
+                        {
+                            foreach (var i in list)
+                            {
+                                danhsachbody data = new danhsachbody();
+                                data.bodydb = i.JisSile;
+                                danhsach.Add(data);
+                            }
+                            ViewBag.ds = danhsach;
+                            ViewBag.tenmodel = tenmodel;
+                            string thitruong_hienthi = list.Select(x => x.JisDaio).FirstOrDefault();
+                            ViewBag.thitruong_hienthi = thitruong_hienthi;
+                            string mapallet_hienthi = list.Select(x => x.JisPlno).FirstOrDefault();
+                            ViewBag.mapallet_hienthi = mapallet_hienthi;
+                        }
+                        else
+                        {
+                            StatusMessage = "Không có dữ liệu của pallet này trong database!";
+                            return RedirectToAction("Index");
+                        }
                     }
-                    ViewBag.ds = danhsach;
-                    ViewBag.tenmodel = tenmodel;
+                    if (tenmodel == "T527")
+                    {
+                        var list = await _t527Context.JisekiFs.Where(x => (thitruong.Contains(x.JisDaio) && sopallet.Contains(x.JisPlno))).ToListAsync();
+                        if (list.Count() > 0)
+                        {
+                            foreach (var i in list)
+                            {
+                                danhsachbody data = new danhsachbody();
+                                data.bodydb = i.JisSile;
+                                danhsach.Add(data);
+                            }
+                            ViewBag.ds = danhsach;
+                            ViewBag.tenmodel = tenmodel;
+                            string thitruong_hienthi = list.Select(x => x.JisDaio).FirstOrDefault();
+                            ViewBag.thitruong_hienthi = thitruong_hienthi;
+                            string mapallet_hienthi = list.Select(x => x.JisPlno).FirstOrDefault();
+                            ViewBag.mapallet_hienthi = mapallet_hienthi;
+                        }
+                        else
+                        {
+                            StatusMessage = "Không có dữ liệu của pallet này trong database!";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    if (tenmodel == "T541")
+                    {
+                        var list = await _t541Context.JisekiFs.Where(x => (thitruong.Contains(x.JisDaio) && sopallet.Contains(x.JisPlno))).ToListAsync();
+                        if (list.Count() > 0)
+                        {
+                            foreach (var i in list)
+                            {
+                                danhsachbody data = new danhsachbody();
+                                data.bodydb = i.JisSile;
+                                danhsach.Add(data);
+                            }
+                            ViewBag.ds = danhsach;
+                            ViewBag.tenmodel = tenmodel;
+                            string thitruong_hienthi = list.Select(x => x.JisDaio).FirstOrDefault();
+                            ViewBag.thitruong_hienthi = thitruong_hienthi;
+                            string mapallet_hienthi = list.Select(x => x.JisPlno).FirstOrDefault();
+                            ViewBag.mapallet_hienthi = mapallet_hienthi;
+                        }
+                        else
+                        {
+                            StatusMessage = "Không có dữ liệu của pallet này trong database!";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    if (tenmodel == "T543")
+                    {
+                        var list = await _t527Context.JisekiFs.Where(x => (thitruong.Contains(x.JisDaio) && sopallet.Contains(x.JisPlno))).ToListAsync();
+                        if (list.Count() > 0)
+                        {
+                            foreach (var i in list)
+                            {
+                                danhsachbody data = new danhsachbody();
+                                data.bodydb = i.JisSile;
+                                danhsach.Add(data);
+                            }
+                            ViewBag.ds = danhsach;
+                            ViewBag.tenmodel = tenmodel;
+                            string thitruong_hienthi = list.Select(x => x.JisDaio).FirstOrDefault();
+                            ViewBag.thitruong_hienthi = thitruong_hienthi;
+                            string mapallet_hienthi = list.Select(x => x.JisPlno).FirstOrDefault();
+                            ViewBag.mapallet_hienthi = mapallet_hienthi;
+                        }
+                        else
+                        {
+                            StatusMessage = "Không có dữ liệu của pallet này trong database!";
+                            return RedirectToAction("Index");
+                        }
+                    }
                 }
-                if (tenmodel == "T527")
+                else
                 {
-                    var list = _t527Context.JisekiFs.Where(x => (x.JisDaio == thitruong && x.JisPlno == sopallet)).ToList();
-                    foreach (var i in list)
-                    {
-                        danhsachbody data = new danhsachbody();
-                        //data.model = tenmodel;
-                        //data.merchandide = tenthitruong;
-                        //data.numberpallet = sopallet;
-                        data.bodydb = i.JisSile;
-                        danhsach.Add(data);
-                    }
-                    ViewBag.ds = danhsach;
-                    ViewBag.tenmodel = tenmodel;
+                    StatusMessage = "Không có dữ liệu thị trường này trong database!";
+                    return RedirectToAction("Index");
                 }
             }
             else
             {
-                return RedirectToAction("Index");
+                StatusMessage = "Phải nhập đầy đủ thông tin!";
             }
             return View();
         }
 
         [HttpPost]
-        public IActionResult luu([FromBody] List<danhsachbody> inputList, Lichsu _lichsu)
+        public async Task<IActionResult> luu([FromBody] List<danhsachbody> inputList)
         {
+            ISession session = HttpContext.Session;
+
             foreach (var data in inputList)
             {
-                string db = data.bodydb;
-                string check = data.bodycheck;
-
                 Lichsu dulieu = new Lichsu();
-                //if (!String.IsNullOrEmpty(_lichsu.Bodyno))
-                //{
-                //    dulieu.Bodyno = _lichsu.Bodyno.Trim();
-                //}
-                dulieu.Bodyno = check;
-                dulieu.Datecheck = DateTime.Now;
-                _checkPalletPDCContext.Add(dulieu);
-                _checkPalletPDCContext.SaveChanges();
+                dulieu.Model = data.model;
+                dulieu.Thitruong = data.thitruong;
+                dulieu.Mapallet = data.mapallet;
+                dulieu.Mabodydb = data.bodydb;
+                dulieu.Mabodycheck = data.bodycheck;
+                dulieu.Ngaygio = DateTime.Now;
+                dulieu.Nguoithaotac = session.GetString("user").ToString();
+                await _checkPalletPDCContext.AddAsync(dulieu);
+                await _checkPalletPDCContext.SaveChangesAsync();
             }
-            return Json(new { success = true });
+            return Json(new { success = "đã lưu dữ liệu OK vào database thành công!" });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> luuNG([FromBody] List<danhsachbody> inputList)
+        {
+            ISession session = HttpContext.Session;
+            foreach (var data in inputList)
+            {
+                LichsuNg dulieuNG = new LichsuNg();
+                dulieuNG.Model = data.model;
+                dulieuNG.Thitruong = data.thitruong;
+                dulieuNG.Mapallet = data.mapallet;
+                dulieuNG.Mabodydb = data.bodydb;
+                if (data.bodycheck.Length < 2)
+                {
+                    dulieuNG.Mabodycheck = "Không có mã body";
+                }
+                else
+                {
+                    dulieuNG.Mabodycheck = data.bodycheck;
+                }
+                dulieuNG.Ngaygio = DateTime.Now;
+                dulieuNG.Nguoithaotac = session.GetString("user").ToString();
+                await _checkPalletPDCContext.AddAsync(dulieuNG);
+                await _checkPalletPDCContext.SaveChangesAsync();
+            }
+            return Json(new { success = "đã lưu dữ liệu NG vào database thành công!" });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
