@@ -9,7 +9,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Check Pallet PDC</title>
+    <title>@ViewData["Title"]</title>
 @*    <!-- Font Awesome Icons -->
     <link href="~/adminlte-master/plugins/fontawesome-free/css/all.min.css" rel="stylesheet" />*@
     <!-- Theme style -->
@@ -17,15 +17,22 @@
     <script src="~/adminlte-master/plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="~/adminlte-master/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-@*    <!-- AdminLTE App -->
-    <script src="~/adminlte-master/dist/js/adminlte.min.js"></script>*@
+    <!-- AdminLTE App -->
+    <script src="~/adminlte-master/dist/js/adminlte.min.js"></script>
     <link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/adminlte-master/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/adminlte-master/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/adminlte-master/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/adminlte-master/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+
+
 </head>
 <body class="hold-transition layout-top-nav layout-navbar-fixed">
     <div class="wrapper">
         <nav class="main-header navbar navbar-expand-md navbar-light ">
             <div class="container">
-                <a href="#" class="navbar-brand">
+                <a  class="navbar-brand">
                     <img src="~/cube_78954.ico" alt="AdminLTE Logo" class="brand-image img-circle " style="opacity: .8">
                     <span class="brand-text ">Check Pallet</span>
                 </a>
@@ -37,11 +44,15 @@
                 <div class="collapse navbar-collapse order-3" id="navbarCollapse">
                     <!-- Left navbar links -->
                     <ul class="navbar-nav">
+                        
                         <li class="nav-item">
-                            <a asp-action="index" style="color:white" class="btn btn-success navbar-btn nav-link">Bắt đầu kiểm tra</a>
+                            <a asp-action="index" asp-controller="home" style="color:white" class="btn btn-danger navbar-btn nav-link">Bắt đầu kiểm tra</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">Thống kê & lịch sử</a>
+                            <a asp-action="Thongketrongngay" asp-controller="lichsus" class="nav-link">Thống kê trong ngày</a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-action="index" asp-controller="lichsus" class="nav-link">Kiểm tra lịch sử</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Quản lý </a>
