@@ -1,0 +1,153 @@
+﻿@model IEnumerable<pdc.Models.Lichsu.Lichsu>
+
+@{
+    ViewData["Title"] = "Thống kê trong ngày";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    .table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td {
+        vertical-align: middle;
+    }
+
+    .table.dataTable > thead > tr > th:not(.sorting_disabled), table.dataTable > thead > tr > td:not(.sorting_disabled) {
+        vertical-align: middle;
+    }
+</style>
+
+
+@section Scripts{
+    <script src="~/adminlte-master/plugins/jquery/jquery.min.js"></script>
+    <script src="~/adminlte-master/dist/js/adminlte.js"></script>
+    <script src="~/adminlte-master/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/adminlte-master/plugins/jszip/jszip.min.js"></script>
+    <script src="~/adminlte-master/plugins/pdfmake/pdfmake.min.js"></script>
+    <script src="~/adminlte-master/plugins/pdfmake/vfs_fonts.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <script src="~/adminlte-master/plugins/select2/js/select2.full.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#example1").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["excel", "print", "colvis"],
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        })
+    </script>
+}
+
+
+    <div class="content-header">
+        <div class="container">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    Check Pallet Software <small>Version 1.0</small>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item active">Thống kê trong ngày</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+
+    <div class="content">
+        <div class="container">
+        @if (Model != null)
+        {
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-dark shadow ">
+                        <div class="card-header">
+                            <h3 class="card-title"> <i class="fa fa-caret-down"></i>  Danh sách dữ liệu trong ngày hôm nay <badge class="badge badge-warning">@DateTime.Now.ToString("yyyy/MM/dd")</badge> </h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="maximize">
+                                    <i class="fas fa-expand"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table id="example1" class="table table-bordered table-striped bg-white">
+                                <thead>
+                                    <tr style="text-align:center ; font-size:small">
+                                        <th>
+                                            Model
+                                        </th>
+                                        <th>
+                                            Thị trường
+                                        </th>
+                                        <th>
+                                            Mã pallet
+                                        </th>
+                                        <th>
+                                            Mã body server
+                                        </th>
+                                        <th>
+                                            Mã body kiểm tra
+                                        </th>
+                                        <th>
+                                            Ngày giờ
+                                        </th>
+                                        <th class="col-2">
+                                            Người thao tác
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td style="text-align:center;font-size:small">
+                                                <b>@Html.DisplayFor(modelItem => item.Model)</b>
+                                            </td>
+                                            <td style="text-align:center;font-size:small">
+                                                @Html.DisplayFor(modelItem => item.Thitruong)
+                                            </td>
+                                            <td style="text-align:center;font-size:small">
+                                                @Html.DisplayFor(modelItem => item.Mapallet)
+                                            </td>
+                                            <td style="text-align:center;font-size:small">
+                                                @Html.DisplayFor(modelItem => item.Mabodydb)
+                                            </td>
+                                            <td style="font-size:small">
+                                                @Html.DisplayFor(modelItem => item.Mabodycheck)
+                                            </td>
+                                            <td style="text-align:center;font-size:small">
+                                                @Html.DisplayFor(modelItem => item.Ngaygio)
+                                            </td>
+                                            <td style="text-align:center;font-size:small">
+                                                @Html.DisplayFor(modelItem => item.Nguoithaotac)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+        @*      <div class="col-12">
+        <partial name="_Alert" />
+        </div>*@
+    </div>
+</div>
+
+
+
+
+

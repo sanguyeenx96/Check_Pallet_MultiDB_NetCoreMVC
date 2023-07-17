@@ -1,0 +1,257 @@
+﻿@model IEnumerable<pdc.Models.Lichsu.Lichsu>
+
+@{
+    ViewData["Title"] = "Kiểm tra lịch sử";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+        .table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td {
+        vertical-align: middle;
+    }
+    .table.dataTable>thead>tr>th:not(.sorting_disabled), table.dataTable>thead>tr>td:not(.sorting_disabled) {
+        vertical-align: middle;
+    }
+</style>
+
+
+@section Scripts{
+    <script src="~/adminlte-master/plugins/jquery/jquery.min.js"></script>
+    <script src="~/adminlte-master/dist/js/adminlte.js"></script>
+    <script src="~/adminlte-master/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/adminlte-master/plugins/jszip/jszip.min.js"></script>
+    <script src="~/adminlte-master/plugins/pdfmake/pdfmake.min.js"></script>
+    <script src="~/adminlte-master/plugins/pdfmake/vfs_fonts.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="~/adminlte-master/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <script src="~/adminlte-master/plugins/select2/js/select2.full.min.js"></script>
+    <!-- InputMask -->
+    <script src="~/adminlte-master/plugins/moment/moment.min.js"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="~/adminlte-master/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $("#example1").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["excel", "print", "colvis"],
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+            $(function () {
+                //Date picker
+                $('#ngaybatdau').datetimepicker({
+                    format: 'yyyy/MM/DD'
+                });
+                //Date picker
+                $('#ngayketthuc').datetimepicker({
+                    format: 'yyyy/MM/DD'
+                });
+            })
+        })
+    </script>
+}
+
+
+    <div class="content-header">
+        <div class="container">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    Check Pallet Software <small>Version 1.0</small>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item active">Kiểm tra lịch sử</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <form asp-controller="Lichsus" asp-action="Index" method="get">
+                        <div class="card card-lightblue">
+                            <div class="card-header">
+                                <h3 class="card-title"> <i class="fa fa-calendar" aria-hidden="true"> </i> Lọc dữ liệu theo ngày</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" style="text-align:center">Từ ngày</label>
+                                    <div class="col-sm-7">
+                                        <div class="input-group date" id="ngaybatdau" data-target-input="nearest">
+                                            <input type="text" name="ngaybatdau" class="form-control datetimepicker-input" data-target="#ngaybatdau" placeholder="Chọn ngày bắt đầu..." autocomplete="off">
+                                            <div class="input-group-append" data-target="#ngaybatdau" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" style="text-align:center">Đến hết ngày</label>
+                                    <div class="col-sm-7">
+                                        <div class="input-group date" id="ngayketthuc" data-target-input="nearest">
+                                            <input type="text" name="ngayketthuc" class="form-control datetimepicker-input" data-target="#ngayketthuc" placeholder="Chọn ngày kết thúc..." autocomplete="off">
+                                            <div class="input-group-append" data-target="#ngayketthuc" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-outline-success btn-block"> <i class="fa fa-search"></i> Lọc dữ liệu</button>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-6">
+                    <form asp-controller="Lichsus" asp-action="Index" method="get">
+                        <div class="card card-olive">
+                            <div class="card-header">
+                                <h3 class="card-title"> <i class="fa fa-barcode" aria-hidden="true"> </i> Lọc dữ liệu theo Mã pallet hoặc Mã body</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label" style="text-align:center">Mã pallet</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="mapallet" name="mapallet" class="form-control" placeholder="Nhập mã pallet cần tìm kiếm...">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label" style="text-align:center">Mã body</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="mabody" name="mabody" class="form-control" placeholder="Nhập mã body cần tìm kiếm...">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-outline-success btn-block"> <i class="fa fa-search"></i> Lọc dữ liệu</button>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-12">
+                    <partial name="_Alert" />
+                </div>
+            </div>
+
+        @if (Model == null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-seconda" role="alert">
+                        <i class="fa fa-exclamation-triangle" aria-hidden="true"> </i> Nhap
+                    </div>
+                </div>
+            </div>
+        }
+
+
+
+        @if (Model != null)
+        {
+            <hr />
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-dark shadow ">
+                        <div class="card-header">
+                            <h3 class="card-title"> <i class="fa fa-caret-down"></i>  Danh sách dữ liệu từ ngày <badge class="badge badge-warning">@TempData["ngaybatdau"]</badge> tới ngày <badge class="badge badge-warning">@TempData["ngayketthuc"]</badge> </h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="maximize">
+                                    <i class="fas fa-expand"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table id="example1" class="table table-bordered table-striped bg-white">
+                                <thead>
+                                    <tr style="text-align:center ; font-size:small">
+                                        <th>
+                                            Model
+                                        </th>
+                                        <th>
+                                            Thị trường
+                                        </th>
+                                        <th>
+                                            Mã pallet
+                                        </th>
+                                        <th>
+                                            Mã body server
+                                        </th>
+                                        <th>
+                                            Mã body kiểm tra
+                                        </th>
+                                        <th>
+                                            Ngày giờ
+                                        </th>
+                                        <th class="col-2">
+                                            Người thao tác
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td style="text-align:center;font-size:small">
+                                                <b>@Html.DisplayFor(modelItem => item.Model)</b>
+                                            </td>
+                                            <td style="text-align:center;font-size:small">
+                                                @Html.DisplayFor(modelItem => item.Thitruong)
+                                            </td>
+                                            <td style="text-align:center;font-size:small">
+                                                @Html.DisplayFor(modelItem => item.Mapallet)
+                                            </td>
+                                            <td style="text-align:center;font-size:small">
+                                                @Html.DisplayFor(modelItem => item.Mabodydb)
+                                            </td>
+                                            <td style="font-size:small">
+                                                @Html.DisplayFor(modelItem => item.Mabodycheck)
+                                            </td>
+                                            <td style="text-align:center;font-size:small">
+                                                @Html.DisplayFor(modelItem => item.Ngaygio)
+                                            </td>
+                                            <td style="text-align:center;font-size:small">
+                                                @Html.DisplayFor(modelItem => item.Nguoithaotac)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+        @*      <div class="col-12">
+        <partial name="_Alert" />
+        </div>*@
+    </div>
+</div>
+
+
+
+
+
