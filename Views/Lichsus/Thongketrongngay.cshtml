@@ -1,11 +1,13 @@
 ﻿@model IEnumerable<pdc.Models.Lichsu.Lichsu>
-
 @{
     ViewData["Title"] = "Thống kê trong ngày";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-
+@{
+    var tenmodel = Json.Serialize(ViewBag.tenmodel);
+    var sl = Json.Serialize(ViewBag.soluongsuco);
+    var tile = Json.Serialize(ViewBag.tile);
+}
 <style>
     .table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td {
         vertical-align: middle;
@@ -15,8 +17,6 @@
         vertical-align: middle;
     }
 </style>
-
-
 @section Scripts{
     <script src="~/adminlte-master/plugins/jquery/jquery.min.js"></script>
     <script src="~/adminlte-master/dist/js/adminlte.js"></script>
@@ -33,7 +33,8 @@
     <script src="~/adminlte-master/plugins/datatables-buttons/js/buttons.print.min.js"></script>
     <script src="~/adminlte-master/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
     <script src="~/adminlte-master/plugins/select2/js/select2.full.min.js"></script>
-
+    <script src="~/cdn.jsdelivr.net_npm_chart.js@3.0.0_dist_chart.min.js"></script>
+    <script src="~/cdnjs.cloudflare.com_ajax_libs_chartjs-plugin-datalabels_2.2.0_chartjs-plugin-datalabels.min.js"></script>
     <script>
         $(document).ready(function () {
             $("#example1").DataTable({
@@ -42,9 +43,65 @@
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
         })
     </script>
+    <script>
+        Chart.register(ChartDataLabels); // Enable plugin
+        Chart.defaults.set('plugins.datalabels', {
+            color: 'black',
+            backgroundColor: 'hsla(70 100% 50% / 0.7)',
+            font: {
+                size: 12,
+            },
+            display: true,
+
+        });
+    </script>
+    <script>
+        var model = @Html.Raw(tenmodel);
+        var soluong = @Html.Raw(sl);
+        var tile = @Html.Raw(tile);
+        var ctx = document.getElementById('bieudo').getContext('2d');
+        var myChart = new Chart(ctx, {
+            data:
+            {
+                datasets:
+                    [
+                        {
+                            type: 'bar',
+                            label: 'Số lượng body đã kiểm tra',
+                            data: soluong,
+                            yAxisID: 'A',
+                            backgroundColor: 'rgba(60,141,188,0.9)'
+                        }
+                    ],
+                labels: model
+            },
+            options:
+            {
+                responsive: true,
+                scales:
+                {
+                    A:
+                    {
+                        stacked: true,
+                        type: 'linear',
+                        position: 'left',
+                        ticks: { beginAtZero: true, stepSize: 1 },
+                    },
+                    x: { ticks: { beginAtZero: true } }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Biểu đồ số lượng mã body đã kiểm tra trong hôm nay'
+                    }
+                }
+            }
+        });
+    </script>
 }
-
-
     <div class="content-header">
         <div class="container">
             <div class="row mb-2">
@@ -59,17 +116,37 @@
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
-
     <div class="content">
         <div class="container">
         @if (Model != null)
         {
-
             <div class="row">
+                <div class="col-7">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div class="row">
+                                <canvas class="col-12" id="bieudo"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-5">
+                    <div class="col-12">
+                        <div class="small-box bg-olive shadow">
+                            <div class="inner">
+                                <h3>@ViewBag.total <small>pcs</small></h3>
+                                <p>Tổng số lượng</p>                                
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-folder-open"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-12">
-                    <div class="card card-dark shadow ">
+                    <div class="card card-navy ">
                         <div class="card-header">
-                            <h3 class="card-title"> <i class="fa fa-caret-down"></i>  Danh sách dữ liệu trong ngày hôm nay <badge class="badge badge-warning">@DateTime.Now.ToString("yyyy/MM/dd")</badge> </h3>
+                            <h3 class="card-title"> <i class="fa fa-bars"></i>  Danh sách dữ liệu trong ngày hôm nay : <badge class="badge badge-warning">@DateTime.Now.ToString("yyyy/MM/dd")</badge> </h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="fas fa-minus"></i>
@@ -80,6 +157,44 @@
                             </div>
                         </div>
                         <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6 col-12">
+                                    <div class="info-box">
+                                        <span style="font-size:small" class="info-box-icon bg-secondary"> L1231</span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Số lượng</span>
+                                            <span class="info-box-number">@TempData["sl_l1231"].ToString() pcs</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6 col-12">
+                                    <div class="info-box">
+                                        <span style="font-size:small" class="info-box-icon bg-secondary"> T527</span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Số lượng</span>
+                                            <span class="info-box-number">@TempData["sl_t527"].ToString() pcs</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6 col-12">
+                                    <div class="info-box">
+                                        <span style="font-size:small" class="info-box-icon bg-secondary"> T541</span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Số lượng</span>
+                                            <span class="info-box-number">@TempData["sl_t541"].ToString() pcs</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6 col-12">
+                                    <div class="info-box">
+                                        <span style="font-size:small" class="info-box-icon bg-secondary"> T543</span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Số lượng</span>
+                                            <span class="info-box-number">@TempData["sl_t543"].ToString() pcs</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <table id="example1" class="table table-bordered table-striped bg-white">
                                 <thead>
                                     <tr style="text-align:center ; font-size:small">
@@ -139,11 +254,7 @@
                     </div>
                 </div>
             </div>
-
         }
-        @*      <div class="col-12">
-        <partial name="_Alert" />
-        </div>*@
     </div>
 </div>
 

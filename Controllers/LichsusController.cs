@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using pdc.Helpers;
 using pdc.Models.Lichsu;
@@ -15,9 +17,12 @@ namespace pdc.Controllers
     {
         private readonly CheckPalletPDCContext _context;
 
-        public LichsusController(CheckPalletPDCContext context)
+        private readonly string _lichsuconnectionString;
+
+        public LichsusController(CheckPalletPDCContext context, IConfiguration config)
         {
             _context = context;
+            _lichsuconnectionString = config.GetConnectionString("lichsuConnectionString");
         }
 
         [TempData]
@@ -35,8 +40,15 @@ namespace pdc.Controllers
                 var list = await _context.Lichsus
                                .Where(x => x.Ngaygio >= start && x.Ngaygio <= end)
                                .ToListAsync();
+                TempData["chedo"] = "ngay";
                 TempData["ngaybatdau"] = start.ToString("yyyy/MM/dd");
                 TempData["ngayketthuc"] = end.ToString("yyyy/MM/dd");
+
+                TempData["sl_l1231"] = list.Where(x => x.Model == "L1231").Count();
+                TempData["sl_t527"] = list.Where(x => x.Model == "T527").Count();
+                TempData["sl_t541"] = list.Where(x => x.Model == "T541").Count();
+                TempData["sl_t543"] = list.Where(x => x.Model == "T543").Count();
+
                 return View(list);
             }
             if (!String.IsNullOrEmpty(mapallet) && String.IsNullOrEmpty(mabody))
@@ -45,6 +57,12 @@ namespace pdc.Controllers
                 var list = await _context.Lichsus
                                .Where(x => x.Mapallet == ma)
                                .ToListAsync();
+                TempData["chedo"] = "mapl";
+                TempData["mapallet"] = ma;
+                TempData["sl_l1231"] = list.Where(x => x.Model == "L1231").Count();
+                TempData["sl_t527"] = list.Where(x => x.Model == "T527").Count();
+                TempData["sl_t541"] = list.Where(x => x.Model == "T541").Count();
+                TempData["sl_t543"] = list.Where(x => x.Model == "T543").Count();
                 return View(list);
             }
             if (!String.IsNullOrEmpty(mabody) && String.IsNullOrEmpty(mapallet))
@@ -53,6 +71,12 @@ namespace pdc.Controllers
                 var list = await _context.Lichsus
                                .Where(x => x.Mabodycheck == ma)
                                .ToListAsync();
+                TempData["chedo"] = "mabd";
+                TempData["mabody"] = ma;
+                TempData["sl_l1231"] = list.Where(x => x.Model == "L1231").Count();
+                TempData["sl_t527"] = list.Where(x => x.Model == "T527").Count();
+                TempData["sl_t541"] = list.Where(x => x.Model == "T541").Count();
+                TempData["sl_t543"] = list.Where(x => x.Model == "T543").Count();
                 return View(list);
             }
             if (!String.IsNullOrEmpty(mapallet) && !String.IsNullOrEmpty(mabody))
@@ -62,6 +86,13 @@ namespace pdc.Controllers
                 var list = await _context.Lichsus
                                .Where(x => (x.Mapallet == mapl && x.Mabodycheck == mabd))
                                .ToListAsync();
+                TempData["chedo"] = "ma2";
+                TempData["mapallet"] = mapl;
+                TempData["mabody"] = mabd;
+                TempData["sl_l1231"] = list.Where(x => x.Model == "L1231").Count();
+                TempData["sl_t527"] = list.Where(x => x.Model == "T527").Count();
+                TempData["sl_t541"] = list.Where(x => x.Model == "T541").Count();
+                TempData["sl_t543"] = list.Where(x => x.Model == "T543").Count();
                 return View(list);
             }
             return View();
@@ -72,140 +103,61 @@ namespace pdc.Controllers
             DateTime today = DateTime.Now;
             today = today.ChangeTime(1, 0, 10);
             var list = await _context.Lichsus.Where(x => x.Ngaygio >= today).ToListAsync();
-            return View(list);
-        }
 
-        // GET: Lichsus/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Lichsus == null)
+            var listtong = _context.Lichsus
+                .Where(x => x.Ngaygio >= today)
+                .ToList();
+            int totalNGtong = Convert.ToInt32(listtong.Count().ToString());
+            // string connectionString = "Data Source=192.168.1.254;User Id=sa;Password=123;Initial Catalog=BaoLoi;Trusted_connection=false;TrustServerCertificate=True";
+            string query = "SELECT[Model], COUNT(*) AS Soluong FROM dbo.lichsu WHERE Ngaygio >= '" + today + "' GROUP BY[Model] ORDER BY Soluong DESC";
+            using (SqlConnection connection = new SqlConnection(_lichsuconnectionString))
             {
-                return NotFound();
-            }
-
-            var lichsu = await _context.Lichsus
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (lichsu == null)
-            {
-                return NotFound();
-            }
-
-            return View(lichsu);
-        }
-
-        // GET: Lichsus/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Lichsus/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Model,Thitruong,Mapallet,Mabodydb,Mabodycheck,Ngaygio,Nguoithaotac")] Lichsu lichsu)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(lichsu);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(lichsu);
-        }
-
-        // GET: Lichsus/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Lichsus == null)
-            {
-                return NotFound();
-            }
-
-            var lichsu = await _context.Lichsus.FindAsync(id);
-            if (lichsu == null)
-            {
-                return NotFound();
-            }
-            return View(lichsu);
-        }
-
-        // POST: Lichsus/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Model,Thitruong,Mapallet,Mabodydb,Mabodycheck,Ngaygio,Nguoithaotac")] Lichsu lichsu)
-        {
-            if (id != lichsu.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                SqlCommand command = new SqlCommand(query, connection);
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                List<string> ten_model = new List<string>();
+                List<int> soluong = new List<int>();
+                List<double> tilephantram = new List<double>();
+                DataTable dataTable = new DataTable();
+                dataTable.Load(reader);
+                int totalsoluong = 0;
+                int i = 0;
+                while (i < dataTable.Rows.Count)
                 {
-                    _context.Update(lichsu);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!LichsuExists(lichsu.Id))
+                    string ten;
+                    int sl;
+                    double percent;
+                    if (i == 0)
                     {
-                        return NotFound();
+                        DataRow row = dataTable.Rows[i];
+                        ten = row["Model"].ToString();
+                        sl = Convert.ToInt32(row["Soluong"]);
+                        totalsoluong += sl;
+                        percent = Math.Round(((double)sl / totalNGtong * 100), 1);
                     }
                     else
                     {
-                        throw;
+                        DataRow row = dataTable.Rows[i];
+                        ten = row["Model"].ToString();
+                        sl = Convert.ToInt32(row["Soluong"]);
+                        totalsoluong += sl;
+                        percent = Math.Round(((double)totalsoluong / totalNGtong * 100), 1);
                     }
+                    ten_model.Add(ten);
+                    soluong.Add(sl);
+                    tilephantram.Add(percent);
+                    i++;
                 }
-                return RedirectToAction(nameof(Index));
+                ViewBag.tenmodel = ten_model;
+                ViewBag.soluongsuco = soluong;
+                ViewBag.tile = tilephantram;
+                ViewBag.total = totalNGtong.ToString();
             }
-            return View(lichsu);
-        }
-
-        // GET: Lichsus/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Lichsus == null)
-            {
-                return NotFound();
-            }
-
-            var lichsu = await _context.Lichsus
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (lichsu == null)
-            {
-                return NotFound();
-            }
-
-            return View(lichsu);
-        }
-
-        // POST: Lichsus/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Lichsus == null)
-            {
-                return Problem("Entity set 'CheckPalletPDCContext.Lichsus'  is null.");
-            }
-            var lichsu = await _context.Lichsus.FindAsync(id);
-            if (lichsu != null)
-            {
-                _context.Lichsus.Remove(lichsu);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool LichsuExists(int id)
-        {
-            return (_context.Lichsus?.Any(e => e.Id == id)).GetValueOrDefault();
+            TempData["sl_l1231"] = list.Where(x => x.Model == "L1231").Count();
+            TempData["sl_t527"] = list.Where(x => x.Model == "T527").Count();
+            TempData["sl_t541"] = list.Where(x => x.Model == "T541").Count();
+            TempData["sl_t543"] = list.Where(x => x.Model == "T543").Count();
+            return View(list);
         }
     }
 }

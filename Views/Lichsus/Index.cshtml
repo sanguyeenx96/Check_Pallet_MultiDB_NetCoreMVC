@@ -6,10 +6,11 @@
 }
 
 <style>
-        .table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td {
+    .table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td {
         vertical-align: middle;
     }
-    .table.dataTable>thead>tr>th:not(.sorting_disabled), table.dataTable>thead>tr>td:not(.sorting_disabled) {
+
+    .table.dataTable > thead > tr > th:not(.sorting_disabled), table.dataTable > thead > tr > td:not(.sorting_disabled) {
         vertical-align: middle;
     }
 </style>
@@ -79,12 +80,12 @@
             <div class="row">
                 <div class="col-lg-6">
                     <form asp-controller="Lichsus" asp-action="Index" method="get">
-                        <div class="card card-lightblue">
+                        <div id="loctheongay" class="card card-lightblue">
                             <div class="card-header">
                                 <h3 class="card-title"> <i class="fa fa-calendar" aria-hidden="true"> </i> Lọc dữ liệu theo ngày</h3>
-                                <div class="card-tools">
+                                <div id="chucnang1" class="card-tools" hidden>
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="fas fa-minus"></i>
+                                        <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
                             </div>
@@ -93,7 +94,7 @@
                                     <label class="col-sm-5 col-form-label" style="text-align:center">Từ ngày</label>
                                     <div class="col-sm-7">
                                         <div class="input-group date" id="ngaybatdau" data-target-input="nearest">
-                                            <input type="text" name="ngaybatdau" class="form-control datetimepicker-input" data-target="#ngaybatdau" placeholder="Chọn ngày bắt đầu..." autocomplete="off">
+                                            <input type="text" name="ngaybatdau" class="form-control datetimepicker-input" data-target="#ngaybatdau" placeholder="Chọn ngày bắt đầu..." autocomplete="off" required>
                                             <div class="input-group-append" data-target="#ngaybatdau" data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
@@ -104,7 +105,7 @@
                                     <label class="col-sm-5 col-form-label" style="text-align:center">Đến hết ngày</label>
                                     <div class="col-sm-7">
                                         <div class="input-group date" id="ngayketthuc" data-target-input="nearest">
-                                            <input type="text" name="ngayketthuc" class="form-control datetimepicker-input" data-target="#ngayketthuc" placeholder="Chọn ngày kết thúc..." autocomplete="off">
+                                            <input type="text" name="ngayketthuc" class="form-control datetimepicker-input" data-target="#ngayketthuc" placeholder="Chọn ngày kết thúc..." autocomplete="off" required>
                                             <div class="input-group-append" data-target="#ngayketthuc" data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
@@ -119,12 +120,12 @@
                 </div>
                 <div class="col-lg-6">
                     <form asp-controller="Lichsus" asp-action="Index" method="get">
-                        <div class="card card-olive">
+                        <div id="loctheoma" class="card card-olive">
                             <div class="card-header">
                                 <h3 class="card-title"> <i class="fa fa-barcode" aria-hidden="true"> </i> Lọc dữ liệu theo Mã pallet hoặc Mã body</h3>
-                                <div class="card-tools">
+                                <div id="chucnang2" class="card-tools" hidden>
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="fas fa-minus"></i>
+                                        <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
                             </div>
@@ -147,43 +148,102 @@
                         </div>
                     </form>
                 </div>
-                <div class="col-12">
-                    <partial name="_Alert" />
-                </div>
+                @*
+            <div class="col-12">
+            <partial name="_Alert" />
             </div>
-
-        @if (Model == null)
-        {
-            <div class="row">
-                <div class="col-12">
-                    <div class="alert alert-seconda" role="alert">
-                        <i class="fa fa-exclamation-triangle" aria-hidden="true"> </i> Nhap
-                    </div>
-                </div>
+            *@
             </div>
-        }
-
-
 
         @if (Model != null)
         {
-            <hr />
+            <script>
+                $("#loctheongay").addClass(" collapsed-card");
+                $("#chucnang1").removeAttr("hidden");
+
+                $("#loctheoma").addClass(" collapsed-card");
+                $("#chucnang2").removeAttr("hidden");
+            </script>
+
 
             <div class="row">
                 <div class="col-12">
-                    <div class="card card-dark shadow ">
+                    <div class="card card-navy shadow ">
                         <div class="card-header">
-                            <h3 class="card-title"> <i class="fa fa-caret-down"></i>  Danh sách dữ liệu từ ngày <badge class="badge badge-warning">@TempData["ngaybatdau"]</badge> tới ngày <badge class="badge badge-warning">@TempData["ngayketthuc"]</badge> </h3>
+                            @if (TempData["chedo"].ToString() == "ngay")
+                            {
+                                <h3 class="card-title">
+                                    <i class="fa fa-bars"></i>
+                                    Danh sách dữ liệu từ ngày <badge class="badge badge-warning">@TempData["ngaybatdau"]</badge> tới ngày <badge class="badge badge-warning">@TempData["ngayketthuc"]</badge>
+                                </h3>
+                            }
+                            @if (TempData["chedo"].ToString() == "mapl")
+                            {
+                                <h3 class="card-title">
+                                    <i class="fa fa-bars"></i>
+                                    Danh sách dữ liệu có Mã pallet : <badge class="badge badge-warning">@TempData["mapallet"]</badge>
+                                </h3>
+                            }
+                            @if (TempData["chedo"].ToString() == "mabd")
+                            {
+                                <h3 class="card-title">
+                                    <i class="fa fa-bars"></i>
+                                    Danh sách dữ liệu có Mã body : <badge class="badge badge-warning">@TempData["mabody"]</badge>
+                                </h3>
+                            }
+                            @if (TempData["chedo"].ToString() == "ma2")
+                            {
+                                <h3 class="card-title">
+                                    <i class="fa fa-bars"></i>
+                                    Danh sách dữ liệu có Mã pallet : <badge class="badge badge-warning">@TempData["mapallet"]</badge> và Mã body : <badge class="badge badge-warning">@TempData["mabody"]</badge>
+                                </h3>
+                            }
+
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
                                 <button type="button" class="btn btn-tool" data-card-widget="maximize">
                                     <i class="fas fa-expand"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6 col-12">
+                                    <div class="info-box">
+                                        <span style="font-size:small" class="info-box-icon bg-secondary"> L1231</span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Số lượng</span>
+                                            <span class="info-box-number">@TempData["sl_l1231"].ToString() pcs</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6 col-12">
+                                    <div class="info-box">
+                                        <span style="font-size:small" class="info-box-icon bg-secondary"> T527</span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Số lượng</span>
+                                            <span class="info-box-number">@TempData["sl_t527"].ToString() pcs</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6 col-12">
+                                    <div class="info-box">
+                                        <span style="font-size:small" class="info-box-icon bg-secondary"> T541</span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Số lượng</span>
+                                            <span class="info-box-number">@TempData["sl_t541"].ToString() pcs</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6 col-12">
+                                    <div class="info-box">
+                                        <span style="font-size:small" class="info-box-icon bg-secondary"> T543</span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Số lượng</span>
+                                            <span class="info-box-number">@TempData["sl_t543"].ToString() pcs</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <table id="example1" class="table table-bordered table-striped bg-white">
                                 <thead>
                                     <tr style="text-align:center ; font-size:small">
