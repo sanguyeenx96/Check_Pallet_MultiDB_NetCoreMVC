@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "Thống kê trong ngày";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Active"] = "2";
+
 }
 @{
     var tenmodel = Json.Serialize(ViewBag.tenmodel);
@@ -160,7 +162,7 @@
                             <div class="row">
                                 <div class="col-md-3 col-sm-6 col-12">
                                     <div class="info-box">
-                                        <span style="font-size:small" class="info-box-icon bg-secondary"> L1231</span>
+                                        <span style="font-size:small" class="info-box-icon bg-gradient-secondary"> L1231</span>
                                         <div class="info-box-content">
                                             <span class="info-box-text">Số lượng</span>
                                             <span class="info-box-number">@TempData["sl_l1231"].ToString() pcs</span>
@@ -169,7 +171,7 @@
                                 </div>
                                 <div class="col-md-3 col-sm-6 col-12">
                                     <div class="info-box">
-                                        <span style="font-size:small" class="info-box-icon bg-secondary"> T527</span>
+                                        <span style="font-size:small" class="info-box-icon bg-gradient-secondary"> T527</span>
                                         <div class="info-box-content">
                                             <span class="info-box-text">Số lượng</span>
                                             <span class="info-box-number">@TempData["sl_t527"].ToString() pcs</span>
@@ -178,7 +180,7 @@
                                 </div>
                                 <div class="col-md-3 col-sm-6 col-12">
                                     <div class="info-box">
-                                        <span style="font-size:small" class="info-box-icon bg-secondary"> T541</span>
+                                        <span style="font-size:small" class="info-box-icon bg-gradient-secondary"> T541</span>
                                         <div class="info-box-content">
                                             <span class="info-box-text">Số lượng</span>
                                             <span class="info-box-number">@TempData["sl_t541"].ToString() pcs</span>
@@ -187,7 +189,7 @@
                                 </div>
                                 <div class="col-md-3 col-sm-6 col-12">
                                     <div class="info-box">
-                                        <span style="font-size:small" class="info-box-icon bg-secondary"> T543</span>
+                                        <span style="font-size:small" class="info-box-icon bg-gradient-secondary"> T543</span>
                                         <div class="info-box-content">
                                             <span class="info-box-text">Số lượng</span>
                                             <span class="info-box-number">@TempData["sl_t543"].ToString() pcs</span>

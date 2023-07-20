@@ -1,0 +1,86 @@
+﻿@model IEnumerable<pdc.Models.Lichsu.AdminSetting>
+
+@{
+    ViewData["Active"] = "5";
+    ViewData["Title"] = "Caidat";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .table td, .table th {
+        padding: 0.75rem;
+        vertical-align: baseline;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+
+<div class="content-header">
+    <div class="container">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                Check Pallet Software <small>Version 1.0</small>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item active">Cài đặt</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<div class="content">
+    <div class="container">
+        <div class="col-lg-6">
+            <div class="card card-navy shadow">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fa fa-cog"> </i> Cài đặt chế độ kiểm tra </h3>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr style="text-align:center">
+                                <th>
+                                    Chế độ
+                                </th>
+                                <th>
+                                    Trạng thái
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr style="text-align:center">
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Mode)
+                                    </td>
+                                    <td>
+                                        @if (item.Value == 0)
+                                        {
+                                            <span class="badge badge-danger">Không cho phép</span>
+                                        }
+                                        @if (item.Value == 1)
+                                        {
+                                            <span class="badge badge-success">Cho phép</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <form asp-action="thaydoi">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="hidden" name="value" value="@item.Value" />
+                                            <input type="submit" value="Thay đổi" class="btn btn-outline-danger btn-sm btn-block" />
+                                        </form>
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

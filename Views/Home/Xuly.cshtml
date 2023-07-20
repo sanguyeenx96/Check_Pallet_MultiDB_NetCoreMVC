@@ -1,17 +1,33 @@
 ﻿@{
-    ViewData["Title"] = "Checking pallet...";
+    ViewData["Title"] = "Đang kiểm tra...";
+    ViewData["Active"] = "1";
+
 }
 
 @model danhsachbody
 @{
+   
     string ten_model = ViewBag.tenmodel;
-    string ten_thitruong = TempData["thitruong"].ToString();
-    string ten_ma_pallet = TempData["sopallet"].ToString();
+    string ten_thitruong = ViewBag.thitruong_hienthi;
+    string ten_ma_pallet = ViewBag.mapallet_hienthi;
     string mapallet__hienthi = ViewBag.mapallet_hienthi;
     string thitruong_hienthi = ViewBag.thitruong_hienthi;
 }
 
 @section Scripts{
+    <script>
+        document.addEventListener('keydown', (e) => {
+            e = e || window.event;
+            if (e.keyCode == 116) {
+                e.preventDefault();
+            }
+        });
+    </script>
+    <script>
+        $(window).bind('beforeunload', function () {
+            return "Do you want to exit this page?";
+        });
+    </script>
     <script>
         var rowCount = $("#tableData > tbody").children().length;
         $("#sodong").append(rowCount);
@@ -22,7 +38,7 @@
             if (e.keyCode === 13) {
                 event.preventDefault(); // Đừng thực hiện hành động mặc định khi nhấn Enter
                 var inputValue = $(this).val().toLowerCase(); //lấy giá trị của Input
-              
+
                 if (inputValue === "9999") {
                     var inputList = [];
                     var listbody = [];
@@ -155,54 +171,58 @@
                         <div id="thenhapdulieu" class="card bg-gradient-purple shadow">
                             <div class="card-header">
                                 <h3 class="card-title"> <small>Bước</small>  <i class="fa-solid fa-2"></i></h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-group row hienthi" style="text-align: center;">
-                                    <label id="labelmabody" class="col-sm-5 col-form-label">Mã body thùng</label>
-                                    <input id="sobody" name="sobody" type="text" class="form-control col-sm-6" autocomplete="off" autofocus>
-                                </div>
-                            </div>
+                            @if (ViewBag.trangthaichecklai != null)
+                            {
+                                <span style="float:right; font-size:large;color:red" class=" badge badge-dark"> <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Recheck</span>
+                            }
                         </div>
-                    </form>
-                </div>
-                <div class="col-lg-4 col-sm-6" style="margin-top:15px">
-                    <div id="thongbao" class="small-box bg-gradient-warning shadow">
-                        <div class="inner">
-                            <h3 id="checkok"></h3>
-                            <p>Số thùng đã kiểm tra</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fa fa-cog fa-spin fa-3x fa-fw"></i>
+                        <div class="card-body">
+                            <div class="form-group row hienthi" style="text-align: center;">
+                                <label id="labelmabody" class="col-sm-5 col-form-label">Mã body thùng</label>
+                                <input id="sobody" name="sobody" type="text" class="form-control col-sm-6" autocomplete="off" autofocus>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-sm-6" style="margin-top:14px">
-                    <div class="info-box ">
-                        <div class="info-box-content">
-                            <span class="info-box-number text-center  mb-0">
-                                <small>Tên model:</small> <a>@ten_model</a>
-                            </span>
-                            <span class="info-box-number text-center  mb-0">
-                                <small>Thị trường:</small> @thitruong_hienthi
-                            </span>
-                            <span class="info-box-number text-center  mb-0">
-                                <small> Mã pallet:</small> @mapallet__hienthi
-                            </span>
-                        </div>
+                </form>
+            </div>
+            <div class="col-lg-4 col-sm-6" style="margin-top:15px">
+                <div id="thongbao" class="small-box bg-gradient-warning shadow">
+                    <div class="inner">
+                        <h3 id="checkok"></h3>
+                        <p>Số thùng đã kiểm tra</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-cog fa-spin fa-3x fa-fw"></i>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="card  ">
-                        <div class="card-header">
-                            <h3 class="card-title"> <i class="fa fa-level-down" aria-hidden="true"></i> Danh sách mã body thùng cần kiểm tra</h3>
-                            @*                            <h3 class="card-title"> Merchandide: <b>@TempData["thitruong"]</b>  - Number pallet: <b>@TempData["sopallet"]</b>   </h3>
+            <div class="col-lg-3 col-sm-6" style="margin-top:14px">
+                <div class="info-box ">
+                    <div class="info-box-content">
+                        <span class="info-box-number text-center  mb-0">
+                            <small>Tên model:</small> <a>@ten_model</a>
+                        </span>
+                        <span class="info-box-number text-center  mb-0">
+                            <small>Thị trường:</small> @thitruong_hienthi
+                        </span>
+                        <span class="info-box-number text-center  mb-0">
+                            <small> Mã pallet:</small> @mapallet__hienthi
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card  ">
+                    <div class="card-header">
+                        <h3 class="card-title"> <i class="fa fa-level-down" aria-hidden="true"></i> Danh sách mã body thùng cần kiểm tra</h3>
+                        @*                            <h3 class="card-title"> Merchandide: <b>@TempData["thitruong"]</b>  - Number pallet: <b>@TempData["sopallet"]</b>   </h3>
                         *@
-                        </div>
-                        <div class="card-body">
-                            <table id="tableData" class="table table-bordered bg-white" style="text-align:center">
-                                <tbody>
+                    </div>
+                    <div class="card-body">
+                        <table id="tableData" class="table table-bordered bg-white" style="text-align:center">
+                            <tbody>
                                 @foreach (var i in (List<danhsachbody>)ViewBag.ds)
                                 {
                                     <tr>
@@ -233,7 +253,7 @@
                 <h1>THIẾU PALLET <br /> <small>  Kiểm tra và thao tác lại </small>  </h1>
             </div>
             <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"> </i> Đóng </button>
+                <button type="button" class="btn btn-light" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"> </i> Đóng </button>
             </div>
         </div>
     </div>
