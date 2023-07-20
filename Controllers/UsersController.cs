@@ -22,7 +22,31 @@ namespace pdc.Controllers
         [TempData]
         public string StatusMessage { get; set; }
 
-        // GET: Users
+        public async Task<IActionResult> Caidat()
+        {
+            var list = await _context.AdminSettings.ToListAsync();
+            return View(list);
+        }
+
+        [HttpPost, ActionName("thaydoi")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Caidat(int id, int value)
+        {
+            var setting = await _context.AdminSettings.FindAsync(id);
+            if (value == 0)
+            {
+                setting.Value = 1;
+            }
+            if (value == 1)
+            {
+                setting.Value = 0;
+            }
+            _context.Update(setting);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Caidat));
+        }
+
         public async Task<IActionResult> Index()
         {
             return _context.Users != null ?

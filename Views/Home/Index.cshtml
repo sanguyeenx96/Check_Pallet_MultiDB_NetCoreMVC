@@ -1,5 +1,12 @@
-﻿@{
-    ViewData["Title"] = "Checking pallet...";
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    int? modecheck = HttpContextAccessor.HttpContext.Session.GetInt32("dupmode");
+}
+
+@{
+    ViewData["Active"] = "1";
+    ViewData["Title"] = "Bắt đầu kiểm tra...";
 }
 @section Scripts{
     <script>
@@ -32,9 +39,9 @@
                         <li class="breadcrumb-item active">Bắt đầu kiểm tra</li>
                         <li class="breadcrumb-item active">Bước 1</li>
                     </ol>
-                </div><!-- /.col -->
-            </div><!-- /.row -->
-        </div><!-- /.container-fluid -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="content">
@@ -43,28 +50,38 @@
                 <div class="card card-purple shadow">
                     <div class="card-header">
                         <h3 class="card-title">  <small>Bước</small>  <i class="fa-solid fa-1"></i></h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label" style="text-align: center;"> Mã thị trường</label>
-                            <div class="col-sm-9">
-                                <input id="thitruong" name="thitruong" type="text" class="form-control" autofocus required>
-                            </div>
+                        @{
+                        if (modecheck == 0)
+                        {
+                            <span style="float:right" class=" badge badge-danger"> Check trùng Number list : KHÔNG CHO PHÉP</span>
+                        }
+                        if (modecheck == 1)
+                        {
+                            <span style="float:right" class=" badge badge-success"> Check trùng Number list : CHO PHÉP</span>
+                        }
+                    }
+                </div>
+                <div class="card-body">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label" style="text-align: center;"> Mã thị trường</label>
+                        <div class="col-sm-9">
+                            <input id="thitruong" name="thitruong" type="text" class="form-control" autofocus required>
                         </div>
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label" style="text-align: center;">Mã pallet</label>
-                            <div class="col-sm-9">
-                                <input id="sopallet" name="sopallet" type="text" class="form-control" required>
-                            </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label" style="text-align: center;">Mã pallet</label>
+                        <div class="col-sm-9">
+                            <input id="sopallet" name="sopallet" type="text" class="form-control" required>
                         </div>
                     </div>
                 </div>
-            </form>
-            <div class="col-12">
-                <partial name="_Alert" />
             </div>
+        </form>
+        <div class="col-12">
+            <partial name="_Alert" />
         </div>
     </div>
+</div>
 
 
 

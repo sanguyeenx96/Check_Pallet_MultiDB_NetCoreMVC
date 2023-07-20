@@ -62,6 +62,10 @@ namespace pdc.Controllers
         {
             ISession session = HttpContext.Session;
             var hoten = session.GetString("user");
+            if (hoten == "Administrator")
+            {
+                return RedirectToAction("Thongketrongngay", "Lichsus");
+            }
             if (hoten == null)
             {
                 return RedirectToAction("Login");
@@ -79,18 +83,40 @@ namespace pdc.Controllers
                     StatusMessage = "Phải nhập đầy đủ thông tin!";
                 }
             }
+            int dupmode = _checkPalletPDCContext.AdminSettings.Where(x => x.Mode == "duplicate").ToList().Select(x => x.Value).FirstOrDefault();
+            session.SetInt32("dupmode", dupmode);
+
             return View();
         }
 
         public async Task<IActionResult> Xuly()
         {
+            int dupmode = _checkPalletPDCContext.AdminSettings.Where(x => x.Mode == "duplicate").ToList().Select(x => x.Value).FirstOrDefault();
+
             if (TempData["thitruong"] != null && TempData["sopallet"] != null)
             {
                 string thitruong = TempData["thitruong"].ToString();
                 string sopallet = TempData["sopallet"].ToString();
+
                 var truyvan = await _checkPalletPDCContext.Dulieuthitruongs.Where(x => thitruong.Contains(x.Mechandide)).FirstOrDefaultAsync();
                 if (truyvan != null)
                 {
+                    int checktrungpallet = _checkPalletPDCContext.Lichsus.Where(x => sopallet.Contains(x.Mapallet)).Count();
+                    if (dupmode == 0) //off tat chuc nang
+                    {
+                        if (checktrungpallet > 0)
+                        {
+                            StatusMessage = "Pallet này đã có dữ liệu kiểm tra! Thay đổi cài đặt để bật chức năng kiểm tra lại!";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    if (dupmode == 1) //on bat chuc nang
+                    {
+                        if (checktrungpallet > 0)
+                        {
+                            ViewBag.trangthaichecklai = "Kiểm tra lại pallet";
+                        }
+                    }
                     string tenmodel = truyvan.Model.ToString();
                     string tenthitruong = truyvan.Mechandide.ToString();
                     List<danhsachbody> danhsach = new List<danhsachbody>();

@@ -16,6 +16,7 @@ namespace pdc.Models.Lichsu
         {
         }
 
+        public virtual DbSet<AdminSetting> AdminSettings { get; set; } = null!;
         public virtual DbSet<Dulieuthitruong> Dulieuthitruongs { get; set; } = null!;
         public virtual DbSet<Lichsu> Lichsus { get; set; } = null!;
         public virtual DbSet<LichsuNg> LichsuNgs { get; set; } = null!;
@@ -32,6 +33,19 @@ namespace pdc.Models.Lichsu
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AdminSetting>(entity =>
+            {
+                entity.ToTable("admin_setting");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Mode)
+                    .HasMaxLength(50)
+                    .HasColumnName("mode");
+
+                entity.Property(e => e.Value).HasColumnName("value");
+            });
+
             modelBuilder.Entity<Dulieuthitruong>(entity =>
             {
                 entity.ToTable("dulieuthitruong");

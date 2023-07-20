@@ -25,16 +25,15 @@
     <link rel="stylesheet" href="~/adminlte-master/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="~/adminlte-master/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <link rel="stylesheet" href="~/adminlte-master/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
-    @*<style>
-    .content-wrapper {
-    background-image: url('/2.jpg');
-    background-size;
-    }
-    </style>*@
+    <style>
+        .body > div:nth-child(1) > nav:nth-child(1) > div:nth-child(1) > div:nth-child(3) > ul:nth-child(1) > li:nth-child(1) > a:nth-child(1){
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body class="hold-transition layout-top-nav layout-navbar-fixed">
     <div class="wrapper">
-        <nav class="main-header navbar navbar-expand-md navbar-light ">
+        <nav class="main-header navbar navbar-expand-lg navbar-light ">
             <div class="container">
                 <a class="navbar-brand">
                     <img src="~/cube_78954.ico" alt="AdminLTE Logo" class="brand-image img-circle " style="opacity: .8">
@@ -47,34 +46,37 @@
 
                 <div class="collapse navbar-collapse order-3" id="navbarCollapse">
                     <!-- Left navbar links -->
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav ">
                         @if (hoten != "Administrator")
                         {
                             <li class="nav-item">
-                                <button asp-action="index" asp-controller="home" style="color:white" class="btn btn-danger navbar-btn nav-link">Bắt đầu kiểm tra</button>
+                                <a id="1" asp-action="index" asp-controller="home" style="color:white" class="btn bg-gradient-purple navbar-btn nav-link">Bắt đầu kiểm tra</a>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <button asp-action="index" asp-controller="home" style="color:white" class="btn btn-danger navbar-btn nav-link" disabled>Bắt đầu kiểm tra</button>
+                                <button asp-action="index" asp-controller="home" style="color:white" class="btn btn-secondary navbar-btn nav-link" disabled><i class="fa fa-user"></i> ADMIN MODE</button>
                             </li>
                         }
                         <li class="nav-item">
-                            <a asp-action="Thongketrongngay" asp-controller="lichsus" class="nav-link">Thống kê trong ngày</a>
+                            <a id="2" asp-action="Thongketrongngay" asp-controller="lichsus" class="nav-link">Thống kê trong ngày</a>
                         </li>
                         <li class="nav-item">
-                            <a asp-action="index" asp-controller="lichsus" class="nav-link">Kiểm tra lịch sử</a>
+                            <a id="3" asp-action="index" asp-controller="lichsus" class="nav-link">Kiểm tra lịch sử</a>
                         </li>
                         @if (hoten == "Administrator")
                         {
                             <li class="nav-item dropdown">
-                                <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle"><i class="fa fa-cog"></i> Quản lý </a>
+                                <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Quản lý </a>
                                 <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
                                     <li><a asp-action="create" asp-controller="users" class="dropdown-item">Thêm tài khoản </a></li>
                                     <li class="dropdown-divider"></li>
                                     <li><a asp-action="index" asp-controller="users" class="dropdown-item">Danh sách tài khoản </a></li>
                                 </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a id="5" asp-action="caidat" asp-controller="users" class="nav-link"><i class="fa fa-cog"></i> Cài đặt</a>
                             </li>
                         }
 
@@ -83,7 +85,7 @@
                     <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
                         <!-- Messages Dropdown Menu -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link" data-toggle="dropdown" href="#">
+                            <a id="6" class="nav-link" data-toggle="dropdown" href="#">
                                 <small>Người vận hành:</small> @hoten.ToString()
                             </a>
                             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
@@ -112,7 +114,7 @@
         </div>
         <aside class="control-sidebar control-sidebar-dark">
         </aside>
-        <footer class="main-footer ">
+        <footer class="main-footer">
             <!-- To the right -->
             <div class="float-right d-none d-sm-inline">
                 SANG <i class=""></i>
@@ -122,5 +124,10 @@
         </footer>
     </div>
     @await RenderSectionAsync("Scripts", required: false)
+
+    @if (ViewData["Active"] != null)
+    {
+        <script type="text/javascript">document.getElementById("@ViewData["Active"]").classList.add("active")</script>
+    }
 </body>
 </html>
