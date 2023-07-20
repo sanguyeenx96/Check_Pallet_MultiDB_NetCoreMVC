@@ -16,6 +16,19 @@
 
 @section Scripts{
     <script>
+        function launchIntoFullscreen(element) {
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            }
+        }
+    </script>
+    <script>
         document.addEventListener('keydown', (e) => {
             e = e || window.event;
             if (e.keyCode == 116) {
@@ -36,6 +49,8 @@
         checkok.text(slok + "/" + rowCount);
         $("#sobody").keydown(function (e) {
             if (e.keyCode === 13) {
+                launchIntoFullscreen(document.documentElement);
+
                 event.preventDefault(); // Đừng thực hiện hành động mặc định khi nhấn Enter
                 var inputValue = $(this).val().toLowerCase(); //lấy giá trị của Input
 
