@@ -61,14 +61,12 @@ namespace pdc.Controllers
             {
                 return NotFound();
             }
-
             var user = await _context.Users
                 .FirstOrDefaultAsync(m => m.Hoten == hoten);
             if (user == null)
             {
                 return NotFound();
             }
-
             return View(user);
         }
 
@@ -90,7 +88,6 @@ namespace pdc.Controllers
                 themtaikhoan.Hoten = user.Hoten.Trim();
                 themtaikhoan.Bophan = user.Bophan;
                 themtaikhoan.Calamviec = user.Calamviec;
-
                 var checktrung = _context.Users.Where(x => user.Manv.Contains(x.Manv)).Count();
                 if (checktrung > 0)
                 {
@@ -122,9 +119,6 @@ namespace pdc.Controllers
             return View(user);
         }
 
-        // POST: Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Manv,Password,Hoten,Bophan,Calamviec")] User user)
@@ -157,7 +151,6 @@ namespace pdc.Controllers
             return View(user);
         }
 
-        // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Users == null)
@@ -175,7 +168,6 @@ namespace pdc.Controllers
             return View(user);
         }
 
-        // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
