@@ -50,13 +50,21 @@
                 event.preventDefault(); // Đừng thực hiện hành động mặc định khi nhấn Enter
                 var inputValue = $(this).val().toLowerCase(); //lấy giá trị của Input
 
-                if (inputValue === "9999") {
+                if (inputValue == "9999") {
                     var inputList = [];
                     var listbody = [];
                     var tableRows = $('table tr');
                     tableRows.each(function () {
                         var bodydb = $(this).find('td:eq(0)').text().toUpperCase();
-                        var bodycheck = $(this).find('input').val().toUpperCase();
+
+                        var bodycheckInput = $(this).find('input'); // Lấy phần tử input
+                        var bodycheck = bodycheckInput.val(); // Lấy giá trị của phần tử input
+
+                        if (bodycheck !== null && bodycheck !== undefined) {
+                            bodycheck = bodycheck.toUpperCase(); // Chuyển đổi thành chữ in hoa
+                        } else {
+                            bodycheck = ""; // Chuyển đổi thành chữ in hoa
+                        }
                         inputList.push({
                             model: "@ten_model",
                             thitruong: "@ten_thitruong",
@@ -68,22 +76,9 @@
                     console.log(inputList);
 
                     if (slok == rowCount) {
-                        $.ajax({
-                            url: "/Home/luu",
-                            type: "POST",
-                            data: JSON.stringify(inputList),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            success: function (result) {
-                                console.log(result);
-                            },
-                            error: function (xhr, status, error) {
-                                console.log(error);
-                            }
-                        });
                         var modal = $('#modal-ok');
                         modal.modal('show');
-                        var countdown = 5;
+                        var countdown = 10;
                         $('#countdown').text(countdown);
                         var interval = setInterval(function () {
                             countdown--;
@@ -91,14 +86,28 @@
                             if (countdown == 0) {
                                 clearInterval(interval);
                                 modal.modal('hide');
-                                $("#sobody").remove();
-                                $("#labelmabody").remove();
-                                var labelTag = document.createElement('label');
-                                labelTag.className = " col-12 col-form-label";
-                                labelTag.innerHTML = "Kiểm tra kết thúc!";
-                                $('.hienthi').prepend(labelTag);
-                                $("#thenhapdulieu").removeClass(" bg-gradient-purple");
-                                $("#thenhapdulieu").addClass(" bg-gradient-success");
+                                //$("#sobody").remove();
+                                //$("#labelmabody").remove();
+                                //var labelTag = document.createElement('label');
+                                //labelTag.className = " col-12 col-form-label";
+                                //labelTag.innerHTML = "Kiểm tra kết thúc!";
+                                //$('.hienthi').prepend(labelTag);
+                                //$("#thenhapdulieu").removeClass(" bg-gradient-purple");
+                                //$("#thenhapdulieu").addClass(" bg-gradient-success");
+                                $.ajax({
+                                    url: "/Home/luu",
+                                    type: "POST",
+                                    data: JSON.stringify(inputList),
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: function (result) {
+                                        console.log(result);
+                                        window.location.href = "/Home/Index";
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.log(error);
+                                    }
+                                });
                             }
                         }, 1000);
                     }
@@ -110,7 +119,7 @@
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             success: function (result) {
-                                console.log(result.cell);
+                                console.log(result);
                             },
                             error: function (xhr, status, error) {
                                 console.log(error);
