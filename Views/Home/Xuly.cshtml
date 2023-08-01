@@ -35,12 +35,8 @@
                 e.preventDefault();
             }
         });
-    </script>
-    <script>
-        $(window).bind('beforeunload', function () {
-            return "Do you want to exit this page?";
-        });
-    </script>
+    </script>  
+
     <script>
         var rowCount = $("#tableData > tbody").children().length;
         $("#sodong").append(rowCount);
@@ -54,13 +50,21 @@
                 event.preventDefault(); // Đừng thực hiện hành động mặc định khi nhấn Enter
                 var inputValue = $(this).val().toLowerCase(); //lấy giá trị của Input
 
-                if (inputValue === "9999") {
+                if (inputValue == "9999") {
                     var inputList = [];
                     var listbody = [];
                     var tableRows = $('table tr');
                     tableRows.each(function () {
                         var bodydb = $(this).find('td:eq(0)').text().toUpperCase();
-                        var bodycheck = $(this).find('input').val().toUpperCase();
+
+                        var bodycheckInput = $(this).find('input'); // Lấy phần tử input
+                        var bodycheck = bodycheckInput.val(); // Lấy giá trị của phần tử input
+
+                        if (bodycheck !== null && bodycheck !== undefined) {
+                            bodycheck = bodycheck.toUpperCase(); // Chuyển đổi thành chữ in hoa
+                        } else {
+                            bodycheck = ""; // Chuyển đổi thành chữ in hoa
+                        }
                         inputList.push({
                             model: "@ten_model",
                             thitruong: "@ten_thitruong",
@@ -72,22 +76,9 @@
                     console.log(inputList);
 
                     if (slok == rowCount) {
-                        $.ajax({
-                            url: "/Home/luu",
-                            type: "POST",
-                            data: JSON.stringify(inputList),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            success: function (result) {
-                                console.log(result);
-                            },
-                            error: function (xhr, status, error) {
-                                console.log(error);
-                            }
-                        });
                         var modal = $('#modal-ok');
                         modal.modal('show');
-                        var countdown = 5;
+                        var countdown = 10;
                         $('#countdown').text(countdown);
                         var interval = setInterval(function () {
                             countdown--;
@@ -95,14 +86,28 @@
                             if (countdown == 0) {
                                 clearInterval(interval);
                                 modal.modal('hide');
-                                $("#sobody").remove();
-                                $("#labelmabody").remove();
-                                var labelTag = document.createElement('label');
-                                labelTag.className = " col-12 col-form-label";
-                                labelTag.innerHTML = "Kiểm tra kết thúc!";
-                                $('.hienthi').prepend(labelTag);
-                                $("#thenhapdulieu").removeClass(" bg-gradient-purple");
-                                $("#thenhapdulieu").addClass(" bg-gradient-success");
+                                //$("#sobody").remove();
+                                //$("#labelmabody").remove();
+                                //var labelTag = document.createElement('label');
+                                //labelTag.className = " col-12 col-form-label";
+                                //labelTag.innerHTML = "Kiểm tra kết thúc!";
+                                //$('.hienthi').prepend(labelTag);
+                                //$("#thenhapdulieu").removeClass(" bg-gradient-purple");
+                                //$("#thenhapdulieu").addClass(" bg-gradient-success");
+                                $.ajax({
+                                    url: "/Home/luu",
+                                    type: "POST",
+                                    data: JSON.stringify(inputList),
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: function (result) {
+                                        console.log(result);
+                                        window.location.href = "/Home/Index";
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.log(error);
+                                    }
+                                });
                             }
                         }, 1000);
                     }
@@ -258,9 +263,9 @@
     </div>
 </div>
 
-<div class="modal fade" id="modal-ng" style="margin-top:20%">
+<div class="modal fade" id="modal-ng">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content  bg-danger" style="text-align:center">
+        <div class="modal-content  bg-gradient-danger" style="text-align:center">
             <div class="modal-header">
                 <h4 class="modal-title"><i class="fa fa-exclamation-triangle" aria-hidden="true"> </i> Cảnh báo</h4>
             </div>
@@ -268,14 +273,14 @@
                 <h1>THIẾU PALLET <br /> <small>  Kiểm tra và thao tác lại </small>  </h1>
             </div>
             <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-light" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"> </i> Đóng </button>
+                <button style="width:150px" type="button" class="btn btn-light" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"> </i> Đóng </button>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="modal-ok" style="margin-top:20%">
+<div class="modal fade" id="modal-ok">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content  bg-success" style="text-align:center">
+        <div class="modal-content  bg-gradient-success" style="text-align:center">
             <div class="modal-header">
                 <h4 class="modal-title"><i class="fa fa-exclamation-triangle" aria-hidden="true"> </i> Thông báo <small> (Đóng sau <a id="countdown"></a> giây) </small>   </h4>
             </div>
@@ -286,7 +291,6 @@
                 <br />
                 <small>Đang lưu dữ liệu vào máy chủ...</small>
                 <br />
-
             </div>
         </div>
     </div>

@@ -8,6 +8,7 @@ using pdc.Models.T541;
 using pdc.Models.T543;
 using System;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace pdc.Controllers
@@ -58,10 +59,12 @@ namespace pdc.Controllers
             return View();
         }
 
-        public IActionResult Index(string thitruong, string sopallet)
+        public IActionResult Index(string thitruong, string sopallet, string inputcatkytu)
         {
             ISession session = HttpContext.Session;
             var hoten = session.GetString("user");
+            int dupmode = _checkPalletPDCContext.AdminSettings.Where(x => x.Mode == "duplicate").ToList().Select(x => x.Value).FirstOrDefault();
+            session.SetInt32("dupmode", dupmode);
             if (hoten == "Administrator")
             {
                 return RedirectToAction("Thongketrongngay", "Lichsus");
@@ -74,17 +77,39 @@ namespace pdc.Controllers
             {
                 if (!String.IsNullOrEmpty(thitruong) && !String.IsNullOrEmpty(sopallet))
                 {
-                    TempData["thitruong"] = thitruong;
-                    TempData["sopallet"] = sopallet;
-                    return RedirectToAction("Xuly");
+                    try
+                    {
+                        if (inputcatkytu == "1") // khac T543
+                        {
+                            string p1 = thitruong.Substring(2, 8);
+                            string p2 = thitruong.Substring(12, 2);
+                            string cutted_thitruong = p1 + p2;
+
+                            int startIndex = 2; // Vị trí bắt đầu cắt, tính từ 0
+                            int length = 10; // Số ký tự cần lấy
+                            string cutted_sopallet = sopallet.Substring(startIndex, length);
+
+                            TempData["thitruong"] = cutted_thitruong;
+                            TempData["sopallet"] = cutted_sopallet;
+                            return RedirectToAction("Xuly");
+                        }
+                        if (inputcatkytu == "0") //  T543
+                        {
+                            TempData["thitruong"] = thitruong;
+                            TempData["sopallet"] = sopallet;
+                            return RedirectToAction("Xuly");
+                        }
+                    }
+                    catch
+                    {
+                        StatusMessage = "Mã barcode không đúng định dạng!";
+                    }
                 }
                 else
                 {
                     StatusMessage = "Phải nhập đầy đủ thông tin!";
                 }
             }
-            int dupmode = _checkPalletPDCContext.AdminSettings.Where(x => x.Mode == "duplicate").ToList().Select(x => x.Value).FirstOrDefault();
-            session.SetInt32("dupmode", dupmode);
 
             return View();
         }
@@ -194,15 +219,13 @@ namespace pdc.Controllers
                     }
                     if (tenmodel == "T543")
                     {
-                        var list = await _t527Context.JisekiFs.Where(x => (thitruong.Contains(x.JisDaio) && sopallet.Contains(x.JisPlno))).ToListAsync();
+                        var list = await _t543Context.JisekiFs.Where(x => (thitruong.Contains(x.JisDaio) && sopallet.Contains(x.JisPlno))).OrderByDescending(x => x.JisKout).ToListAsync();
                         if (list.Count() > 0)
                         {
-                            foreach (var i in list)
-                            {
-                                danhsachbody data = new danhsachbody();
-                                data.bodydb = i.JisSile;
-                                danhsach.Add(data);
-                            }
+                            var giaTriDuyNhat = list.First();
+                            danhsachbody data = new danhsachbody();
+                            data.bodydb = giaTriDuyNhat.JisSile;
+                            danhsach.Add(data);
                             ViewBag.ds = danhsach;
                             ViewBag.tenmodel = tenmodel;
                             string thitruong_hienthi = list.Select(x => x.JisDaio).FirstOrDefault();
