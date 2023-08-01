@@ -35,12 +35,8 @@
                 e.preventDefault();
             }
         });
-    </script>
-    <script>
-        $(window).bind('beforeunload', function () {
-            return "Do you want to exit this page?";
-        });
-    </script>
+    </script>  
+
     <script>
         var rowCount = $("#tableData > tbody").children().length;
         $("#sodong").append(rowCount);
@@ -114,7 +110,7 @@
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             success: function (result) {
-                                console.log(result);
+                                console.log(result.cell);
                             },
                             error: function (xhr, status, error) {
                                 console.log(error);
@@ -258,9 +254,9 @@
     </div>
 </div>
 
-<div class="modal fade" id="modal-ng" style="margin-top:20%">
+<div class="modal fade" id="modal-ng">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content  bg-danger" style="text-align:center">
+        <div class="modal-content  bg-gradient-danger" style="text-align:center">
             <div class="modal-header">
                 <h4 class="modal-title"><i class="fa fa-exclamation-triangle" aria-hidden="true"> </i> Cảnh báo</h4>
             </div>
@@ -268,14 +264,14 @@
                 <h1>THIẾU PALLET <br /> <small>  Kiểm tra và thao tác lại </small>  </h1>
             </div>
             <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-light" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"> </i> Đóng </button>
+                <button style="width:150px" type="button" class="btn btn-light" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"> </i> Đóng </button>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="modal-ok" style="margin-top:20%">
+<div class="modal fade" id="modal-ok">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content  bg-success" style="text-align:center">
+        <div class="modal-content  bg-gradient-success" style="text-align:center">
             <div class="modal-header">
                 <h4 class="modal-title"><i class="fa fa-exclamation-triangle" aria-hidden="true"> </i> Thông báo <small> (Đóng sau <a id="countdown"></a> giây) </small>   </h4>
             </div>
@@ -286,7 +282,6 @@
                 <br />
                 <small>Đang lưu dữ liệu vào máy chủ...</small>
                 <br />
-
             </div>
         </div>
     </div>

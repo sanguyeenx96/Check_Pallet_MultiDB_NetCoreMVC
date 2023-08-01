@@ -52,6 +52,8 @@
                             <li class="nav-item">
                                 <a id="1" asp-action="index" asp-controller="home" style="color:white" class="btn bg-gradient-purple navbar-btn nav-link">Bắt đầu kiểm tra</a>
                             </li>
+
+                          
                         }
                         else
                         {
@@ -63,8 +65,10 @@
                             <a id="2" asp-action="Thongketrongngay" asp-controller="lichsus" class="nav-link">Thống kê trong ngày</a>
                         </li>
                         <li class="nav-item">
-                            <a id="3" asp-action="index" asp-controller="lichsus" class="nav-link">Kiểm tra lịch sử</a>
+                            <a id="3" asp-action="index" asp-controller="lichsus" class="nav-link">Lịch sử</a>
                         </li>
+
+             
                         @if (hoten == "Administrator")
                         {
                             <li class="nav-item dropdown">
