@@ -219,13 +219,26 @@ namespace pdc.Controllers
                     }
                     if (tenmodel == "T543")
                     {
+                        //var list = await _t543Context.JisekiFs.Where(x => (thitruong.Contains(x.JisDaio) && sopallet.Contains(x.JisPlno))).OrderByDescending(x => x.JisKout).ToListAsync();
                         var list = await _t543Context.JisekiFs.Where(x => (thitruong.Contains(x.JisDaio) && sopallet.Contains(x.JisPlno))).OrderByDescending(x => x.JisKout).ToListAsync();
                         if (list.Count() > 0)
                         {
-                            var giaTriDuyNhat = list.First();
-                            danhsachbody data = new danhsachbody();
-                            data.bodydb = giaTriDuyNhat.JisSile;
-                            danhsach.Add(data);
+                            //var giaTriDuyNhat = list.First();
+                            //danhsachbody data = new danhsachbody();
+                            //data.bodydb = giaTriDuyNhat.JisSile;
+                            //danhsach.Add(data);
+                            //ViewBag.ds = danhsach;
+                            //ViewBag.tenmodel = tenmodel;
+                            //string thitruong_hienthi = list.Select(x => x.JisDaio).FirstOrDefault();
+                            //ViewBag.thitruong_hienthi = thitruong_hienthi;
+                            //string mapallet_hienthi = list.Select(x => x.JisPlno).FirstOrDefault();
+                            //ViewBag.mapallet_hienthi = mapallet_hienthi;
+                            foreach (var i in list)
+                            {
+                                danhsachbody data = new danhsachbody();
+                                data.bodydb = i.JisSile;
+                                danhsach.Add(data);
+                            }
                             ViewBag.ds = danhsach;
                             ViewBag.tenmodel = tenmodel;
                             string thitruong_hienthi = list.Select(x => x.JisDaio).FirstOrDefault();

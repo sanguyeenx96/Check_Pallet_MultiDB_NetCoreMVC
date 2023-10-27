@@ -6,7 +6,7 @@
 
 @model danhsachbody
 @{
-   
+
     string ten_model = ViewBag.tenmodel;
     string ten_thitruong = ViewBag.thitruong_hienthi;
     string ten_ma_pallet = ViewBag.mapallet_hienthi;
@@ -35,130 +35,222 @@
                 e.preventDefault();
             }
         });
-    </script>  
+    </script>
 
     <script>
-        var rowCount = $("#tableData > tbody").children().length;
-        $("#sodong").append(rowCount);
-        var checkok = $("#checkok");
-        var slok = 0;
-        checkok.text(slok + "/" + rowCount);
-        $("#sobody").keydown(function (e) {
-            if (e.keyCode === 13) {
-                launchIntoFullscreen(document.documentElement);
+        var tenmodel = "@ten_model"
+        if (tenmodel != "T543") {
+            var rowCount = $("#tableData > tbody").children().length;
+            $("#sodong").append(rowCount);
+            var checkok = $("#checkok");
+            var slok = 0;
+            checkok.text(slok + "/" + rowCount);
+            $("#sobody").keydown(function (e) {
+                if (e.keyCode === 13) {
+                    launchIntoFullscreen(document.documentElement);
 
-                event.preventDefault(); // Đừng thực hiện hành động mặc định khi nhấn Enter
-                var inputValue = $(this).val().toLowerCase(); //lấy giá trị của Input
+                    event.preventDefault(); // Đừng thực hiện hành động mặc định khi nhấn Enter
+                    var inputValue = $(this).val().toLowerCase(); //lấy giá trị của Input
 
-                if (inputValue == "9999") {
-                    var inputList = [];
-                    var listbody = [];
-                    var tableRows = $('table tr');
-                    tableRows.each(function () {
-                        var bodydb = $(this).find('td:eq(0)').text().toUpperCase();
+                    if (inputValue == "9999") {
+                        var inputList = [];
+                        var listbody = [];
+                        var tableRows = $('table tr');
+                        tableRows.each(function () {
+                            var bodydb = $(this).find('td:eq(0)').text().toUpperCase();
 
-                        var bodycheckInput = $(this).find('input'); // Lấy phần tử input
-                        var bodycheck = bodycheckInput.val(); // Lấy giá trị của phần tử input
+                            var bodycheckInput = $(this).find('input'); // Lấy phần tử input
+                            var bodycheck = bodycheckInput.val(); // Lấy giá trị của phần tử input
 
-                        if (bodycheck !== null && bodycheck !== undefined) {
-                            bodycheck = bodycheck.toUpperCase(); // Chuyển đổi thành chữ in hoa
-                        } else {
-                            bodycheck = ""; // Chuyển đổi thành chữ in hoa
+                            if (bodycheck !== null && bodycheck !== undefined) {
+                                bodycheck = bodycheck.toUpperCase(); // Chuyển đổi thành chữ in hoa
+                            } else {
+                                bodycheck = ""; // Chuyển đổi thành chữ in hoa
+                            }
+                            inputList.push({
+                                model: "@ten_model",
+                                thitruong: "@ten_thitruong",
+                                mapallet: "@ten_ma_pallet",
+                                bodydb: bodydb,
+                                bodycheck: bodycheck
+                            });
+                        });
+                        console.log(inputList);
+
+                        if (slok == rowCount) {
+                            $.ajax({
+                                url: "/Home/luu",
+                                type: "POST",
+                                data: JSON.stringify(inputList),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function (result) {
+                                    console.log(result);
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log(error);
+                                }
+                            });
+                            var modal = $('#modal-ok');
+                            modal.modal('show');
+                            var countdown = 10;
+                            $('#countdown').text(countdown);
+                            var interval = setInterval(function () {
+                                countdown--;
+                                $('#countdown').text(countdown);
+                                if (countdown == 0) {
+                                    clearInterval(interval);
+                                    window.location.href = "/Home/Index";
+                                }
+                            }, 1000);
                         }
+                        else {
+                            $.ajax({
+                                url: "/Home/luuNG",
+                                type: "POST",
+                                data: JSON.stringify(inputList),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function (result) {
+                                    console.log(result);
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log(error);
+                                }
+                            });
+                            var modal = $('#modal-ng');
+                            modal.modal('show');
+                            $("#sobody").val("");
+                        }
+                    }
+                    else {
+                        var tableRows = $('table tr');
+                        var isMatch = false;
+                        tableRows.each(function () {
+                            var rowValue = $(this).find('td:eq(0)').text().toLowerCase();
+                            if (inputValue.indexOf(rowValue) > -1) {
+                                var checktrung = $(this).find('input').val().toLowerCase();
+                                if (checktrung.length > 3) {
+                                }
+                                else {
+                                    //$(this).css('background-color', '#228B22 ');
+                                    isMatch = true;
+                                    $(this).find('input').val(inputValue.toUpperCase());
+                                    $(this).find('input').css('background-color', '#228B22 ');
+                                    $(this).find('input').css("color", "white");
+
+                                    slok++;
+                                    checkok.text(slok + "/" + rowCount);
+                                    if (slok == rowCount) {
+                                        $("#thongbao").removeClass(" bg-gradient-warning");
+                                        $("#thongbao").addClass(" bg-gradient-success");
+                                    }
+                                }
+                            }
+                        });
+                        $(this).val("")
+                    }
+                }
+            });
+        } else {
+            var bodyCheckOkValue;
+            var rowCount = 1;
+            $("#sodong").append(rowCount);
+            var checkok = $("#checkok");
+            var slok = 0;
+            checkok.text(slok + "/" + rowCount);
+            $("#sobody").keydown(function (e) {
+                if (e.keyCode === 13) {
+                    launchIntoFullscreen(document.documentElement);
+
+                    event.preventDefault(); // Đừng thực hiện hành động mặc định khi nhấn Enter
+                    var inputValue = $(this).val().toLowerCase(); //lấy giá trị của Input
+
+                    if (inputValue == "9999") {
+                        var inputList = [];
                         inputList.push({
                             model: "@ten_model",
                             thitruong: "@ten_thitruong",
                             mapallet: "@ten_ma_pallet",
-                            bodydb: bodydb,
-                            bodycheck: bodycheck
+                            bodydb: bodyCheckOkValue.toUpperCase(),
+                            bodycheck: bodyCheckOkValue.toUpperCase()
                         });
-                    });
-                    console.log(inputList);
-
-                    if (slok == rowCount) {
-                        var modal = $('#modal-ok');
-                        modal.modal('show');
-                        var countdown = 10;
-                        $('#countdown').text(countdown);
-                        var interval = setInterval(function () {
-                            countdown--;
+                        console.log(inputList);
+                        if (slok >= rowCount) {
+                            $.ajax({
+                                url: "/Home/luu",
+                                type: "POST",
+                                data: JSON.stringify(inputList),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function (result) {
+                                    console.log(result);
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log(error);
+                                }
+                            });
+                            var modal = $('#modal-ok');
+                            modal.modal('show');
+                            var countdown = 10;
                             $('#countdown').text(countdown);
-                            if (countdown == 0) {
-                                clearInterval(interval);
-                                modal.modal('hide');
-                                //$("#sobody").remove();
-                                //$("#labelmabody").remove();
-                                //var labelTag = document.createElement('label');
-                                //labelTag.className = " col-12 col-form-label";
-                                //labelTag.innerHTML = "Kiểm tra kết thúc!";
-                                //$('.hienthi').prepend(labelTag);
-                                //$("#thenhapdulieu").removeClass(" bg-gradient-purple");
-                                //$("#thenhapdulieu").addClass(" bg-gradient-success");
-                                $.ajax({
-                                    url: "/Home/luu",
-                                    type: "POST",
-                                    data: JSON.stringify(inputList),
-                                    contentType: "application/json; charset=utf-8",
-                                    dataType: "json",
-                                    success: function (result) {
-                                        console.log(result);
-                                        window.location.href = "/Home/Index";
-                                    },
-                                    error: function (xhr, status, error) {
-                                        console.log(error);
-                                    }
-                                });
-                            }
-                        }, 1000);
+                            var interval = setInterval(function () {
+                                countdown--;
+                                $('#countdown').text(countdown);
+                                if (countdown == 0) {
+                                    clearInterval(interval);
+                                    window.location.href = "/Home/Index";
+                                }
+                            }, 1000);
+                        }
+                        else {
+                            $.ajax({
+                                url: "/Home/luuNG",
+                                type: "POST",
+                                data: JSON.stringify(inputList),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function (result) {
+                                    console.log(result);
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log(error);
+                                }
+                            });
+                            var modal = $('#modal-ng');
+                            modal.modal('show');
+                            $("#sobody").val("");
+                        }
                     }
                     else {
-                        $.ajax({
-                            url: "/Home/luuNG",
-                            type: "POST",
-                            data: JSON.stringify(inputList),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            success: function (result) {
-                                console.log(result);
-                            },
-                            error: function (xhr, status, error) {
-                                console.log(error);
-                            }
-                        });
-                        var modal = $('#modal-ng');
-                        modal.modal('show');
-                        $("#sobody").val("");
-                    }
-                }
-                else {
-                    var tableRows = $('table tr');
-                    var isMatch = false;
-                    tableRows.each(function () {
-                        var rowValue = $(this).find('td:eq(0)').text().toLowerCase();
-                        if (inputValue.indexOf(rowValue) > -1) {
-                            var checktrung = $(this).find('input').val().toLowerCase();
-                            if (checktrung.length > 3) {
-                            }
-                            else {
-                                //$(this).css('background-color', '#228B22 ');
-                                isMatch = true;
-                                $(this).find('input').val(inputValue.toUpperCase());
-                                $(this).find('input').css('background-color', '#228B22 ');
-                                $(this).find('input').css("color", "white");
-
-                                slok++;
-                                checkok.text(slok + "/" + rowCount);
-                                if (slok == rowCount) {
-                                    $("#thongbao").removeClass(" bg-gradient-warning");
-                                    $("#thongbao").addClass(" bg-gradient-success");
+                        var tableRows = $('table tr');
+                        var isMatch = false;
+                        tableRows.each(function () {
+                            var rowValue = $(this).find('td:eq(0)').text().toLowerCase();
+                            if (inputValue.indexOf(rowValue) > -1) {
+                                var checktrung = $(this).find('input').val().toLowerCase();
+                                if (checktrung.length > 3) {
+                                }
+                                else {
+                                    isMatch = true;
+                                    $(this).find('input').val(inputValue.toUpperCase());
+                                    $(this).find('input').css('background-color', '#228B22 ');
+                                    $(this).find('input').css("color", "white");
+                                    slok++;
+                                    checkok.text(slok + "/" + rowCount);
+                                    if (slok == rowCount) {
+                                        bodyCheckOkValue = rowValue;
+                                        $("#thongbao").removeClass(" bg-gradient-warning");
+                                        $("#thongbao").addClass(" bg-gradient-success");
+                                    }
                                 }
                             }
-                        }
-                    });
-                    $(this).val("")
+                        });
+                        $(this).val("")
+                    }
                 }
-            }
-        });
+            });
+        }
     </script>
 }
     <style>
