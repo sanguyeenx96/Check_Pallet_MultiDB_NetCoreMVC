@@ -1,0 +1,95 @@
+﻿@model IEnumerable<pdc.Models.Lichsu.Lichsu>
+
+<div class="card">
+    <div class="card-body">
+        <table id="lichsumodel" class="table table-bordered bg-white">
+            <thead>
+                <tr style="text-align:center ; font-size:small">
+                    <th>
+                        Model
+                    </th>
+                    <th>
+                        Thị trường
+                    </th>
+                    <th>
+                        Mã pallet
+                    </th>
+                    <th>
+                        Mã body server
+                    </th>
+                    <th>
+                        Mã body kiểm tra
+                    </th>
+                    <th>
+                        Ngày giờ
+                    </th>
+                    <th class="col-2">
+                        Người thao tác
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td style="text-align:center;font-size:small">
+                            <b>@Html.DisplayFor(modelItem => item.Model)</b>
+                        </td>
+                        <td style="text-align:center;font-size:small;white-space: nowrap">
+                            @Html.DisplayFor(modelItem => item.Thitruong)
+                        </td>
+                        <td style="text-align:center;font-size:small;white-space: nowrap">
+                            <b>@Html.DisplayFor(modelItem => item.Mapallet)</b>
+                        </td>
+                        <td style="text-align:center;font-size:small">
+                            @Html.DisplayFor(modelItem => item.Mabodydb)
+                        </td>
+                        <td style="font-size:small">
+                            @Html.DisplayFor(modelItem => item.Mabodycheck)
+                        </td>
+                        <td style="text-align:center;font-size:small">
+                            @item.Ngaygio.ToString("yyyy/MM/dd HH:mm tt")
+                        </td>
+                        <td style="text-align:center;font-size:small">
+                            @Html.DisplayFor(modelItem => item.Nguoithaotac)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        var collapsedGroups = {}; // Đối tượng để theo dõi trạng thái collapsed của các nhóm
+        var table = $('#lichsumodel').DataTable({
+            orderFixed: [5, 'desc'],
+            pageLength: 1000,
+            lengthChange: false,
+
+            rowGroup: {
+                dataSrc: 2,
+                startRender: function (rows, group) {
+                    var collapsed = !!collapsedGroups[group];
+
+                    rows.nodes().each(function (r) {
+                        r.style.display = collapsed ? 'none' : '';
+                    });
+
+                    return $('<tr/>')
+                        .append('<td colspan="8">' + 'Mã pallet : ' + group + ' (' + rows.count() + ' pcs' + ')</td>')
+                        .attr('data-name', group)
+                        .toggleClass('collapsed', collapsed);
+                }
+            }
+        });
+
+        $('#lichsumodel tbody').on('click', 'tr.group-start', function () {
+            var name = $(this).data('name');
+            collapsedGroups[name] = !collapsedGroups[name]; // Đảo trạng thái collapsed khi người dùng ấn vào
+            table.draw(false);
+        });
+    })
+</script>

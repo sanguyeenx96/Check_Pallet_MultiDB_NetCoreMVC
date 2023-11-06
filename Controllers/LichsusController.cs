@@ -102,7 +102,7 @@ namespace pdc.Controllers
         {
             DateTime today = DateTime.Now;
             today = today.ChangeTime(1, 0, 10);
-            var list = await _context.Lichsus.Where(x => x.Ngaygio >= today).ToListAsync();
+            var list = await _context.Lichsus.Where(x => x.Ngaygio >= today).OrderBy(x=>x.Ngaygio).ToListAsync();
 
             var listtong = _context.Lichsus
                 .Where(x => x.Ngaygio >= today)
@@ -158,6 +158,16 @@ namespace pdc.Controllers
             TempData["sl_t541"] = list.Where(x => x.Model == "T541").Count();
             TempData["sl_t543"] = list.Where(x => x.Model == "T543").Count();
             return View(list);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetLichsuModel(string model)
+        {
+            DateTime today = DateTime.Now;
+            today = today.ChangeTime(1, 0, 10);
+            var list = await _context.Lichsus.Where(x => (x.Ngaygio >= today && x.Model == model)).OrderByDescending(x=>x.Ngaygio).ToListAsync();
+
+            return PartialView("_lichsumodel", list);
         }
     }
 }

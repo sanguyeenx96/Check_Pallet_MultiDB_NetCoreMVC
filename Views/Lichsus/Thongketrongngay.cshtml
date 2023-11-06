@@ -19,30 +19,66 @@
         vertical-align: middle;
     }
 </style>
+
 @section Scripts{
-    <script src="~/adminlte-master/plugins/jquery/jquery.min.js"></script>
-    <script src="~/adminlte-master/dist/js/adminlte.js"></script>
-    <script src="~/adminlte-master/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="~/adminlte-master/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="~/adminlte-master/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="~/adminlte-master/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-    <script src="~/adminlte-master/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="~/adminlte-master/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-    <script src="~/adminlte-master/plugins/jszip/jszip.min.js"></script>
-    <script src="~/adminlte-master/plugins/pdfmake/pdfmake.min.js"></script>
-    <script src="~/adminlte-master/plugins/pdfmake/vfs_fonts.js"></script>
-    <script src="~/adminlte-master/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-    <script src="~/adminlte-master/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-    <script src="~/adminlte-master/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+@*    <link href="~/datatable/datatables.min.css" rel="stylesheet" />
+    <script src="~/datatable/datatables.min.js"></script>
+    <script src="~/datatable/datatables.rowsgroup.js"></script>*@
+
+    <script src="~/tablesort/jquery.datatables.js"></script>
+    <script src="~/tablesort/datatables.rowgroup.js"></script>
+    <link href="~/tablesort/jquery.datatables.css" rel="stylesheet" />
+    <link href="~/tablesort/rowgroup.datatables.css" rel="stylesheet" />
+
     <script src="~/adminlte-master/plugins/select2/js/select2.full.min.js"></script>
     <script src="~/cdn.jsdelivr.net_npm_chart.js@3.0.0_dist_chart.min.js"></script>
     <script src="~/cdnjs.cloudflare.com_ajax_libs_chartjs-plugin-datalabels_2.2.0_chartjs-plugin-datalabels.min.js"></script>
     <script>
         $(document).ready(function () {
-            $("#example1").DataTable({
-                "responsive": true, "lengthChange": false, "autoWidth": false,
-                "buttons": ["excel", "print", "colvis"],
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            var collapsedGroups = {}; // Đối tượng để theo dõi trạng thái collapsed của các nhóm
+            var table = $('#example1').DataTable({
+                orderFixed: [5, 'desc'],
+                pageLength: 1000,
+                lengthChange: false,
+
+                rowGroup: {
+                    dataSrc: 2,
+                    startRender: function (rows, group) {
+                        var collapsed = !!collapsedGroups[group];
+
+                        rows.nodes().each(function (r) {
+                            r.style.display = collapsed ? 'none' : '';
+                        });
+
+                        return $('<tr/>')
+                            .append('<td colspan="8">' + 'Mã pallet : ' + group + ' (' + rows.count() + ' pcs' + ')</td>')
+                            .attr('data-name', group)
+                            .toggleClass('collapsed', collapsed);
+                    }
+                }
+            });         
+  
+            $('#example1 tbody').on('click', 'tr.group-start', function () {
+                var name = $(this).data('name');
+                collapsedGroups[name] = !collapsedGroups[name]; // Đảo trạng thái collapsed khi người dùng ấn vào
+                table.draw(false);
+            });
+
+            $(".btnXemchitiet").click(function () {
+                var model = $(this).data("model");
+                $.ajax({
+                    url: "/lichsus/GetLichsuModel",
+                    type: "GET",
+                    data: {
+                        model: model,
+                    },
+                    success: function (data) {
+                        $("#modelInfo_Xemchitietlichsu").html(data);
+                        $("#modalXemchitietlichsu").modal("show");
+                    },
+                });
+            })
         })
     </script>
     <script>
@@ -123,8 +159,8 @@
         @if (Model != null)
         {
             <div class="row">
-                <div class="col-lg-7">
-                    <div class="card shadow">
+                <div class="col-lg-8">
+                    <div class="card ">
                         <div class="card-body">
                             <div class="row">
                                 <canvas class="col-12" id="bieudo"></canvas>
@@ -132,21 +168,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-5">
-                   
-                        <div class="small-box bg-olive shadow">
-                            <div class="inner">
-                                <h3>@ViewBag.total <small>pcs</small></h3>
-                                <p>Tổng số lượng</p>                                
-                            </div>
-                            <div class="icon">
-                                <i class="fas fa-database"></i>
-                            </div>
+                <div class="col-lg-4">
+
+                    <div class="small-box bg-white ">
+                        <div class="inner">
+                            <h3>@ViewBag.total <small>pcs</small></h3>
+                            <p>Tổng số lượng đã kiểm tra</p>
                         </div>
-               
+                        <div class="icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="col-12">
-                    <div class="card card-navy ">
+                    <div class="card card-default ">
                         <div class="card-header">
                             <h3 class="card-title"> <i class="fa fa-bars"></i>  Danh sách dữ liệu trong ngày hôm nay : <badge class="badge badge-warning">@DateTime.Now.ToString("yyyy/MM/dd")</badge> </h3>
                             <div class="card-tools">
@@ -162,42 +198,42 @@
                             <div class="row">
                                 <div class="col-md-3 col-sm-6 col-12">
                                     <div class="info-box">
-                                        <span style="font-size:small" class="info-box-icon bg-gradient-secondary"> L1231</span>
+                                        <span style="font-size:small" class="info-box-icon bg-secondary"> L1231</span>
                                         <div class="info-box-content">
-                                            <span class="info-box-text">Số lượng</span>
                                             <span class="info-box-number">@TempData["sl_l1231"].ToString() pcs</span>
+                                            <a class="btnXemchitiet" href="#" data-model="L1231">Xem chi tiết</a>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6 col-12">
                                     <div class="info-box">
-                                        <span style="font-size:small" class="info-box-icon bg-gradient-secondary"> T527</span>
+                                        <span style="font-size:small" class="info-box-icon bg-secondary"> T527</span>
                                         <div class="info-box-content">
-                                            <span class="info-box-text">Số lượng</span>
                                             <span class="info-box-number">@TempData["sl_t527"].ToString() pcs</span>
+                                            <a class="btnXemchitiet" href="#" data-model="T527">Xem chi tiết</a>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6 col-12">
                                     <div class="info-box">
-                                        <span style="font-size:small" class="info-box-icon bg-gradient-secondary"> T541</span>
+                                        <span style="font-size:small" class="info-box-icon bg-secondary"> T541</span>
                                         <div class="info-box-content">
-                                            <span class="info-box-text">Số lượng</span>
                                             <span class="info-box-number">@TempData["sl_t541"].ToString() pcs</span>
+                                            <a class="btnXemchitiet" href="#" data-model="T541">Xem chi tiết</a>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6 col-12">
                                     <div class="info-box">
-                                        <span style="font-size:small" class="info-box-icon bg-gradient-secondary"> T543</span>
+                                        <span style="font-size:small" class="info-box-icon bg-secondary"> T543</span>
                                         <div class="info-box-content">
-                                            <span class="info-box-text">Số lượng</span>
                                             <span class="info-box-number">@TempData["sl_t543"].ToString() pcs</span>
+                                            <a class="btnXemchitiet" href="#" data-model="T543">Xem chi tiết</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <table id="example1" class="table table-bordered table-striped bg-white">
+                            <table id="example1" class="table table-bordered   bg-white ">
                                 <thead>
                                     <tr style="text-align:center ; font-size:small">
                                         <th>
@@ -230,10 +266,10 @@
                                             <td style="text-align:center;font-size:small">
                                                 <b>@Html.DisplayFor(modelItem => item.Model)</b>
                                             </td>
-                                            <td style="text-align:center;font-size:small">
+                                            <td style="text-align:center;font-size:small;white-space: nowrap">
                                                 @Html.DisplayFor(modelItem => item.Thitruong)
                                             </td>
-                                            <td style="text-align:center;font-size:small">
+                                            <td style="text-align:center;font-size:small;white-space: nowrap">
                                                 @Html.DisplayFor(modelItem => item.Mapallet)
                                             </td>
                                             <td style="text-align:center;font-size:small">
@@ -243,7 +279,7 @@
                                                 @Html.DisplayFor(modelItem => item.Mabodycheck)
                                             </td>
                                             <td style="text-align:center;font-size:small">
-                                                @Html.DisplayFor(modelItem => item.Ngaygio)
+                                                @item.Ngaygio.ToString("yyyy/MM/dd HH:mm tt")
                                             </td>
                                             <td style="text-align:center;font-size:small">
                                                 @Html.DisplayFor(modelItem => item.Nguoithaotac)
@@ -260,7 +296,17 @@
     </div>
 </div>
 
-
+<div class="modal fade" id="modalXemchitietlichsu" style="padding-right:0px">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div id="modelInfo_Xemchitietlichsu">
+                <div class="overlay">
+                    <i class="fas fa-2x fa-sync fa-spin"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
