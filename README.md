@@ -9,6 +9,10 @@ Kiểm tra mã của lô hàng xuất đi có trùng với dữ liệu lô hàng
 
 ![4](https://github.com/sanguyeenx96/Check_Pallet_MultiDB_NetCoreMVC/assets/103011257/e5b96bf3-cad8-42d3-ad6b-fbe63e8cc2c0)
 
+![1](https://github.com/sanguyeenx96/Check_Pallet_MultiDB_NetCoreMVC/assets/103011257/2d3fc596-2a4c-45b9-8b67-cf2d24ba9e7b)
+
+![2](https://github.com/sanguyeenx96/Check_Pallet_MultiDB_NetCoreMVC/assets/103011257/41d1e701-90a6-490c-bfce-30a276cbf286)
+
 ![5](https://github.com/sanguyeenx96/Check_Pallet_MultiDB_NetCoreMVC/assets/103011257/4633917d-df99-40ef-b7ef-40c45015585a)
 
 ![6](https://github.com/sanguyeenx96/Check_Pallet_MultiDB_NetCoreMVC/assets/103011257/39ceb533-3c79-4ffd-901a-5efc7e381c0e)
